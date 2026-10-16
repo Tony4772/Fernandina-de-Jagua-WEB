@@ -1,0 +1,8 @@
+{
+  "name": "Fernandina de Jagua Chocolates",
+  "description": "Chocolatería artesanal en San Miguel, Lima. Elaboraciones con cacao de origen peruano, bombones finos y notas de cata con devoción al detalle.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
