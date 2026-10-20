@@ -83,15 +83,6 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
             {error && <p className="text-xs text-red-400 mt-1.5">{error}</p>}
           </div>
 
-          <div className="p-3 bg-[#1c120e] rounded-lg border border-[#38221b] text-xs text-primary-fixed-dim/90 flex items-start gap-2">
-            <span className="material-symbols-outlined text-secondary text-[16px] shrink-0 mt-0.5">
-              key
-            </span>
-            <span>
-              Contraseña inicial configurada: <strong className="text-surface-bright">admin123</strong> (puede cambiarla dentro del panel de control).
-            </span>
-          </div>
-
           <div className="pt-2 flex items-center justify-end gap-2.5">
             <button
               type="button"
