@@ -47,6 +47,10 @@ export const Header: React.FC<HeaderProps> = ({
             className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
             src={brand.logoUrl}
             referrerPolicy="no-referrer"
+            onError={(event) => {
+              event.currentTarget.onerror = null;
+              event.currentTarget.src = '/favicon.svg';
+            }}
           />
           <div className="flex flex-col">
             <span className="font-headline-sm text-headline-sm tracking-tight text-on-primary-fixed leading-tight">
