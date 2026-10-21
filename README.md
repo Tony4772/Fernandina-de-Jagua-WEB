@@ -51,14 +51,22 @@ Publica en una URL temporal tipo
 
 ### Opción C — automático desde GitHub (GitHub Actions)
 
-Ya están incluidos dos workflows:
+Las definiciones están en **`docs/github-actions/`** como plantillas (no se pudieron subir
+directamente a `.github/workflows/` por permisos del token que las creó). Para activarlas:
 
-| Workflow | Disparador | Resultado |
+```bash
+mkdir -p .github/workflows
+cp docs/github-actions/*.yml .github/workflows/
+git add .github/workflows && git commit -m "Activar deploy de Firebase Hosting"
+git push
+```
+
+| Plantilla | Disparador | Resultado |
 |---|---|---|
 | `firebase-hosting-merge.yml` | push a `main` | despliegue a producción |
 | `firebase-hosting-pull-request.yml` | pull request a `main` | canal de preview + comentario con la URL |
 
-Para activarlos hace falta un único secreto en el repositorio
+Hace falta un único secreto en el repositorio
 (**Settings → Secrets and variables → Actions → New repository secret**):
 
 1. Genera una cuenta de servicio con rol **Firebase Hosting Admin**:
@@ -66,15 +74,12 @@ Para activarlos hace falta un único secreto en el repositorio
    → crear cuenta → *Claves* → *Agregar clave* → JSON.
 2. Crea el secreto **`FIREBASE_SERVICE_ACCOUNT_FERNANDINA_DE_JAGUA_WEB`** con el contenido completo del JSON.
 
-También puedes generarlo con la CLI:
+Mientras el secreto no exista, los workflows no fallan: compilan el sitio y se saltan el paso de
+despliegue mostrando un aviso (`warning`). También puedes dejar que la CLI lo configure todo:
 
 ```bash
 npx firebase init hosting:github
 ```
-
-Mientras el secreto no exista, los workflows **no fallan**: compilan el sitio y se saltan el paso de
-despliegue mostrando un aviso (`warning`). Así se pueden fusionar los cambios antes de configurar
-las credenciales.
 
 ## Dominio personalizado
 
