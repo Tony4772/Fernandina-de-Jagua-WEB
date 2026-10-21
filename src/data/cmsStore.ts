@@ -43,9 +43,9 @@ export const DEFAULT_SITE_DATA: SiteData = {
   catalog: {
     catalogOverline: 'Catálogo Exclusivo · San Miguel, Lima',
     catalogTitle: 'Nuestra Colección de Chocolates',
-    catalogNotice: 'Para realizar tu pedido, solicítalo cómodamente desde nuestra aplicación oficial de Android o escribiéndonos directamente a nuestro WhatsApp oficial.',
+    catalogNotice: 'Puedes pagar en línea con tarjeta o Yape desde esta misma web, o coordinar tu pedido por nuestra aplicación oficial de Android o por WhatsApp.',
     orderBannerTitle: '¿Cómo ordenar tus chocolates favoritos?',
-    orderBannerDesc: 'Atendemos todos los pedidos y consultas de forma directa y personalizada a través de nuestro WhatsApp oficial al 906 591 037 o cómodamente desde nuestra aplicación oficial de Android.',
+    orderBannerDesc: 'Compra en línea con tarjeta o Yape y coordinamos la entrega contigo, o atiéndete de forma personalizada por nuestro WhatsApp oficial al 906 591 037 y nuestra aplicación oficial de Android.',
   },
   visit: {
     headerTag: 'Atelier & Cacao en Lima',

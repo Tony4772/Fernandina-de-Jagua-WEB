@@ -1,0 +1,12 @@
+rules_version = '2';
+
+// Los pedidos solo se leen y escriben desde Cloud Functions con el Admin SDK,
+// que ignora estas reglas. El navegador no tiene acceso directo a Firestore:
+// así nadie puede ver pedidos de otros clientes ni falsificar un "pagado".
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

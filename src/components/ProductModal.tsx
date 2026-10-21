@@ -6,6 +6,7 @@ interface ProductModalProps {
   onClose: () => void;
   onGoToDetail: (product: Product) => void;
   brand: BrandConfig;
+  onAddToCart?: (product: Product) => void;
 }
 
 export const ProductModal: React.FC<ProductModalProps> = ({
@@ -13,6 +14,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
   onClose,
   onGoToDetail,
   brand,
+  onAddToCart,
 }) => {
   if (!product) return null;
 
@@ -91,7 +93,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
               check_circle
             </span>
             <span className="font-body-sm text-body-sm text-on-surface-variant">
-              Para coordinar entregas o pedidos de esta pieza, escríbenos al WhatsApp {brand.whatsappNumber} o ingresa en la app de Android.
+              Agrega esta pieza al carrito para pagar en línea con tarjeta o Yape, o escríbenos al WhatsApp {brand.whatsappNumber} para coordinar tu pedido.
             </span>
           </div>
 
@@ -115,6 +117,16 @@ export const ProductModal: React.FC<ProductModalProps> = ({
               >
                 Cerrar
               </button>
+              {onAddToCart && (
+                <button
+                  className="inline-flex items-center gap-space-xs px-space-md py-space-xs rounded border border-secondary text-secondary hover:bg-secondary hover:text-on-secondary font-label-md text-label-md uppercase tracking-wider transition-colors cursor-pointer"
+                  onClick={() => onAddToCart(product)}
+                  type="button"
+                >
+                  <span className="material-symbols-outlined text-[16px]">add_shopping_cart</span>
+                  <span>Agregar</span>
+                </button>
+              )}
               <a
                 className="inline-flex items-center gap-space-xs px-space-md py-space-xs rounded bg-secondary text-on-secondary hover:bg-on-tertiary-container font-label-md text-label-md uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
                 href={whatsappUrl}

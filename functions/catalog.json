@@ -1,0 +1,62 @@
+{
+  "generatedFrom": "src/data/products.ts",
+  "currency": "PEN",
+  "products": [
+    {
+      "id": "barra-70-cacao-origen",
+      "name": "Barra Gran Cacao 70% Origen",
+      "netWeight": "80 gramos",
+      "priceValue": 18,
+      "amountInCents": 1800
+    },
+    {
+      "id": "bombones-artesanales-surtidos",
+      "name": "Bombones Artesanales Surtidos",
+      "netWeight": "12 unidades (140g aprox.)",
+      "priceValue": 32,
+      "amountInCents": 3200
+    },
+    {
+      "id": "chocolate-oscuro-frutos-secos",
+      "name": "Chocolate Oscuro con Frutos Secos",
+      "netWeight": "90 gramos",
+      "priceValue": 22,
+      "amountInCents": 2200
+    },
+    {
+      "id": "barra-85-cacao-intenso",
+      "name": "Barra 85% Cacao Intenso",
+      "netWeight": "80 gramos",
+      "priceValue": 19,
+      "amountInCents": 1900
+    },
+    {
+      "id": "trufas-cafe-canela",
+      "name": "Trufas de Café y Canela",
+      "netWeight": "8 unidades (110g)",
+      "priceValue": 26,
+      "amountInCents": 2600
+    },
+    {
+      "id": "tableta-sal-de-maras",
+      "name": "Tableta con Sal de Maras",
+      "netWeight": "80 gramos",
+      "priceValue": 20,
+      "amountInCents": 2000
+    },
+    {
+      "id": "nibs-cacao-acaramelados",
+      "name": "Nibs de Cacao Acaramelados",
+      "netWeight": "100 gramos",
+      "priceValue": 16,
+      "amountInCents": 1600
+    },
+    {
+      "id": "chocolate-fruta-amazonica",
+      "name": "Chocolate con Relleno de Fruta Amazónica",
+      "netWeight": "80 gramos",
+      "priceValue": 24,
+      "amountInCents": 2400
+    }
+  ]
+}

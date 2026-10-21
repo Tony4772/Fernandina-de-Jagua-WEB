@@ -32,6 +32,9 @@ jobs:
       - name: Instalar dependencias
         run: npm ci
 
+      - name: Instalar dependencias del backend de pagos
+        run: npm --prefix functions ci
+
       - name: Comprobar que el secreto de Firebase existe
         id: check_secret
         env:

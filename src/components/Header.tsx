@@ -8,6 +8,8 @@ interface HeaderProps {
   onOpenAdmin: () => void;
   isAdminLoggedIn: boolean;
   brand: BrandConfig;
+  cartCount?: number;
+  onOpenCart?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -17,6 +19,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAdmin,
   isAdminLoggedIn,
   brand,
+  cartCount = 0,
+  onOpenCart,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -98,6 +102,23 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Action Elements */}
         <div className="flex items-center gap-space-md">
+          {/* Cart Button */}
+          <button
+            onClick={onOpenCart}
+            className="relative inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-label-md uppercase tracking-wider transition-all cursor-pointer shadow-sm bg-surface-container-high/80 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-primary-fixed border border-outline-variant/40"
+            title="Ver carrito de compras"
+            aria-label={`Carrito de compras, ${cartCount} artículo(s)`}
+            type="button"
+          >
+            <span className="material-symbols-outlined text-[17px]">shopping_bag</span>
+            <span className="hidden sm:inline">Carrito</span>
+            {cartCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-secondary text-on-secondary text-[10px] font-bold flex items-center justify-center">
+                {cartCount}
+              </span>
+            )}
+          </button>
+
           {/* Admin CMS Access Button */}
           <button
             onClick={onOpenAdmin}
