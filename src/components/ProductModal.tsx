@@ -65,7 +65,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
 
           <div className="flex items-center justify-between py-space-xs bg-surface-container-low px-space-md rounded-lg">
             <span className="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">
-              Precio Sugerido
+              Precio
             </span>
             <span className="font-headline-sm text-headline-sm text-secondary font-bold">
               {product.price}
