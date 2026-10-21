@@ -262,9 +262,24 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             </div>
 
             {error && (
-              <div className="flex items-start gap-space-xs p-space-sm rounded-lg bg-error-container/60 text-on-error-container">
-                <span className="material-symbols-outlined text-[18px] mt-0.5 shrink-0">error</span>
-                <p className="font-body-sm text-body-sm">{error}</p>
+              <div className="flex flex-col gap-space-xs p-space-sm rounded-lg bg-error-container/60 text-on-error-container">
+                <div className="flex items-start gap-space-xs">
+                  <span className="material-symbols-outlined text-[18px] mt-0.5 shrink-0">error</span>
+                  <p className="font-body-sm text-body-sm">{error}</p>
+                </div>
+                <a
+                  href={`${brand.whatsappUrl}?text=${encodeURIComponent(
+                    `Hola, quisiera completar este pedido:\n${items
+                      .map((item) => `• ${item.quantity} × ${item.name}`)
+                      .join('\n')}\nTotal: ${formatSoles(total)}`,
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-1.5 px-space-sm py-1.5 rounded-lg bg-secondary text-on-secondary font-label-md text-[12px] uppercase tracking-wider hover:bg-on-tertiary-container transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[15px]">chat</span>
+                  Pedir este carrito por WhatsApp
+                </a>
               </div>
             )}
 

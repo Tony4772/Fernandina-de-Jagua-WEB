@@ -12,6 +12,12 @@ export default defineConfig(() => {
         '@': import.meta.dirname,
       },
     },
+    preview: {
+      host: '0.0.0.0',
+      port: 4173,
+      // Permite abrir el build publicado desde el host de preview del sandbox.
+      allowedHosts: true,
+    },
     server: {
       host: '0.0.0.0',
       port: 3000,
