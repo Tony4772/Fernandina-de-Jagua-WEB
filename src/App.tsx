@@ -156,8 +156,6 @@ export default function App() {
         currentRoute={currentRoute}
         onRouteChange={handleRouteChange}
         onOpenConcierge={() => setConciergeModalOpen(true)}
-        onOpenAdmin={handleOpenAdmin}
-        isAdminLoggedIn={isAdminLoggedIn}
         brand={siteData.brand}
         cartCount={cartCount(cartItems)}
         onOpenCart={() => setCartOpen(true)}

@@ -5,8 +5,6 @@ interface HeaderProps {
   currentRoute: PageRoute;
   onRouteChange: (route: PageRoute) => void;
   onOpenConcierge: () => void;
-  onOpenAdmin: () => void;
-  isAdminLoggedIn: boolean;
   brand: BrandConfig;
   cartCount?: number;
   onOpenCart?: () => void;
@@ -16,8 +14,6 @@ export const Header: React.FC<HeaderProps> = ({
   currentRoute,
   onRouteChange,
   onOpenConcierge,
-  onOpenAdmin,
-  isAdminLoggedIn,
   brand,
   cartCount = 0,
   onOpenCart,
@@ -119,22 +115,6 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </button>
 
-          {/* Admin CMS Access Button */}
-          <button
-            onClick={onOpenAdmin}
-            className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-label-md uppercase tracking-wider transition-all cursor-pointer shadow-sm ${
-              isAdminLoggedIn
-                ? 'bg-secondary text-on-secondary font-semibold'
-                : 'bg-surface-container-high/80 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-primary-fixed border border-outline-variant/40'
-            }`}
-            title="Panel de Administración CMS"
-          >
-            <span className="material-symbols-outlined text-[15px]">
-              {isAdminLoggedIn ? 'dashboard' : 'lock'}
-            </span>
-            <span className="hidden sm:inline">CMS Admin</span>
-          </button>
-
           <a
             className="hidden sm:inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-lg bg-secondary text-on-secondary hover:bg-on-tertiary-container hover:text-on-primary transition-all duration-200 shadow-sm font-label-md text-label-md uppercase tracking-wider cursor-pointer"
             href={brand.whatsappUrl}
@@ -200,16 +180,6 @@ export const Header: React.FC<HeaderProps> = ({
             }`}
           >
             Visítanos en San Miguel
-          </button>
-          <button
-            onClick={() => {
-              setMobileMenuOpen(false);
-              onOpenAdmin();
-            }}
-            className="text-left py-2 px-3 rounded-lg font-label-md text-label-md uppercase tracking-wider transition-colors text-secondary hover:bg-surface-container flex items-center gap-2"
-          >
-            <span className="material-symbols-outlined text-[16px]">admin_panel_settings</span>
-            <span>Panel CMS Admin</span>
           </button>
           <a
             className="flex items-center justify-center gap-space-xs py-2.5 px-3 rounded-lg bg-secondary text-on-secondary font-label-md text-label-md uppercase tracking-wider mt-2 shadow-sm text-center"
