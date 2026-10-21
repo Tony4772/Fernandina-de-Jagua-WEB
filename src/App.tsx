@@ -18,6 +18,7 @@ import { CheckoutModal } from './components/CheckoutModal';
 import {
   addToCart,
   cartCount,
+  cartTotal,
   CartItem,
   loadCart,
   removeFromCart,
@@ -158,6 +159,7 @@ export default function App() {
         onOpenConcierge={() => setConciergeModalOpen(true)}
         brand={siteData.brand}
         cartCount={cartCount(cartItems)}
+        cartSubtotal={cartTotal(cartItems)}
         onOpenCart={() => setCartOpen(true)}
       />
 

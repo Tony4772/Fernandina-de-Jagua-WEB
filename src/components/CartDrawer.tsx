@@ -46,8 +46,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
       <aside className="relative h-full w-full max-w-md bg-surface-container-lowest shadow-2xl flex flex-col border-l border-surface-container-high animate-in slide-in-from-right duration-200">
         <header className="flex items-center justify-between px-space-md py-space-sm border-b border-surface-container-high bg-primary-container text-surface-bright">
           <div className="flex items-center gap-space-xs">
-            <span className="material-symbols-outlined text-secondary-fixed text-[20px]">shopping_bag</span>
-            <h2 className="font-headline-sm text-headline-sm">Tu pedido</h2>
+            <span className="material-symbols-outlined text-secondary-fixed text-[20px]">shopping_cart</span>
+            <h2 className="font-headline-sm text-headline-sm">Tu carrito</h2>
             {count > 0 && (
               <span className="ml-1 text-[11px] font-label-md uppercase tracking-wider bg-secondary text-on-secondary px-2 py-0.5 rounded-full">
                 {count}

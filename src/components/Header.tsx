@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BrandConfig, PageRoute } from '../types';
+import { formatSoles } from '../lib/cart';
 
 interface HeaderProps {
   currentRoute: PageRoute;
@@ -7,6 +8,7 @@ interface HeaderProps {
   onOpenConcierge: () => void;
   brand: BrandConfig;
   cartCount?: number;
+  cartSubtotal?: number;
   onOpenCart?: () => void;
 }
 
@@ -16,6 +18,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenConcierge,
   brand,
   cartCount = 0,
+  cartSubtotal = 0,
   onOpenCart,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -98,19 +101,27 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Action Elements */}
         <div className="flex items-center gap-space-md">
-          {/* Cart Button */}
+          {/* Shopping cart icon and live summary */}
           <button
             onClick={onOpenCart}
-            className="relative inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-label-md uppercase tracking-wider transition-all cursor-pointer shadow-sm bg-surface-container-high/80 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-primary-fixed border border-outline-variant/40"
-            title="Ver carrito de compras"
-            aria-label={`Carrito de compras, ${cartCount} artículo(s)`}
+            className="relative inline-flex min-h-10 min-w-10 items-center justify-center gap-2 rounded-full border border-surface-container-high bg-surface-container-low px-2.5 text-on-primary-fixed transition-colors hover:bg-surface-container-highest cursor-pointer"
+            title={cartCount > 0 ? `Ver carrito · ${formatSoles(cartSubtotal)}` : 'Abrir carrito'}
+            aria-label={
+              cartCount > 0
+                ? `Abrir carrito, ${cartCount} artículo(s), total ${formatSoles(cartSubtotal)}`
+                : 'Abrir carrito vacío'
+            }
             type="button"
           >
-            <span className="material-symbols-outlined text-[17px]">shopping_bag</span>
-            <span className="hidden sm:inline">Carrito</span>
+            <span className="material-symbols-outlined text-[22px]">shopping_cart</span>
             {cartCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-secondary text-on-secondary text-[10px] font-bold flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-full bg-secondary text-on-secondary text-[10px] font-bold flex items-center justify-center ring-2 ring-surface">
                 {cartCount}
+              </span>
+            )}
+            {cartCount > 0 && (
+              <span className="hidden sm:inline text-xs font-semibold tabular-nums">
+                {formatSoles(cartSubtotal)}
               </span>
             )}
           </button>
