@@ -2,6 +2,7 @@
  * Prueba de humo del backend de pagos.
  * No llama a Culqi ni a Firestore reales: usa un doble en memoria y un fetch
  * simulado. Ejecuta `npm test` dentro de functions/.
+ * Cubre tarjeta (tkn_…) y Yape (ype_…) con Culqi Checkout Custom.
  */
 import assert from 'node:assert/strict';
 import { createApp } from '../app.js';
@@ -157,7 +158,7 @@ try {
     assert.equal(status, 400);
   });
 
-  await check('cobra con la llave secreta y marca el pedido como pagado', async () => {
+  await check('cobra con tarjeta: tkn_… y marca el pedido como pagado', async () => {
     const { status, body } = await post(`/orders/${orderId}/pay`, { token: 'tkn_test_ABC123' });
     assert.equal(status, 200);
     assert.equal(body.status, 'paid');
@@ -206,6 +207,112 @@ try {
     assert.equal(store.get(created.body.orderId).status, 'failed');
 
     // Restaura la respuesta aprobada para las siguientes pruebas.
+    nextChargeResponse = () => ({
+      status: 201,
+      body: {
+        id: 'chr_test_abc123',
+        amount: 5000,
+        currency_code: 'PEN',
+        outcome: { type: 'venta_exitosa', code: '0' },
+        source: { brand: 'VISA' },
+      },
+    });
+  });
+
+  // ——— Yape ———
+  await check('cobra con Yape: ype_… y marca el pedido como pagado', async () => {
+    // Yape approved con source yape
+    nextChargeResponse = () => ({
+      status: 201,
+      body: {
+        id: 'chr_test_yape123',
+        amount: 2000,
+        currency_code: 'PEN',
+        outcome: { type: 'venta_exitosa', code: '0', merchant_message: 'Aprobado Yape' },
+        source: { type: 'yape', brand: 'YAPE' },
+      },
+    });
+
+    const created = await post('/orders', {
+      items: [{ id: 'tableta-sal-de-maras', quantity: 1 }], // S/ 20.00 = 2000 cts
+      customer,
+    });
+    assert.equal(created.status, 201);
+    assert.equal(created.body.amount, 2000);
+
+    const { status, body } = await post(`/orders/${created.body.orderId}/pay`, {
+      token: 'ype_test_ABC123YAPE',
+    });
+    assert.equal(status, 200);
+    assert.equal(body.status, 'paid');
+
+    const chargeCall = culqiCalls.at(-1);
+    assert.equal(chargeCall.body.source_id, 'ype_test_ABC123YAPE');
+    assert.equal(chargeCall.body.amount, 2000);
+
+    const stored = store.get(created.body.orderId);
+    assert.equal(stored.status, 'paid');
+    assert.equal(stored.charge.id, 'chr_test_yape123');
+    // paymentMethod guardado
+    assert.equal(stored.charge.paymentMethod, 'yape');
+    assert.equal(stored.charge.brand, 'YAPE');
+
+    // Restaura
+    nextChargeResponse = () => ({
+      status: 201,
+      body: {
+        id: 'chr_test_abc123',
+        amount: 5000,
+        currency_code: 'PEN',
+        outcome: { type: 'venta_exitosa', code: '0' },
+        source: { brand: 'VISA' },
+      },
+    });
+  });
+
+  await check('rechaza Yape si el monto supera S/ 2,000', async () => {
+    // Crear pedido grande: 32*20 + 18*1 ≈ > 2000 pero usamos combinaciones que existen
+    // tableta-sal-de-maras S/20 x 20 = 40000? no, max 20 u. Necesitamos forzar.
+    // Usaremos producto de S/32 x 20 = 64000, x 4 items = >200000
+    // Para simplicidad, creamos pedido de 2000 y luego simulamos que es > limite
+    // Mejor: crear pedido con cantidad alta que supere limite usando varios productos repetidos
+    // Pero MAX 20 items distintos, cada 20 u. Con 8 productos x 20 u x ~22 avg ≈ 35200? no supera 200000.
+    // Para test, mockeamos directamente creando pedido pequeño y luego lo forzamos a monto alto en store.
+    const created = await post('/orders', {
+      items: [{ id: 'bombones-artesanales-surtidos', quantity: 1 }], // 3200
+      customer,
+    });
+    // Forzamos monto alto directamente en store para simular límite
+    const storedBefore = store.get(created.body.orderId);
+    store.set(created.body.orderId, { ...storedBefore, amount: 250000 }); // S/ 2500
+
+    const { status, body } = await post(`/orders/${created.body.orderId}/pay`, {
+      token: 'ype_test_EXCEDE',
+    });
+    assert.equal(status, 400);
+    assert.match(body.message, /2,?000/i);
+  });
+
+  await check('rechaza OTP Yape inválido con mensaje Culqi', async () => {
+    nextChargeResponse = () => ({
+      status: 400,
+      body: {
+        object: 'error',
+        type: 'validation_error',
+        code: 'invalid_otp',
+        user_message: 'Código de aprobación Yape inválido o vencido.',
+      },
+    });
+    const created = await post('/orders', {
+      items: [{ id: 'nibs-cacao-acaramelados', quantity: 1 }],
+      customer,
+    });
+    const { status, body } = await post(`/orders/${created.body.orderId}/pay`, {
+      token: 'ype_test_BADOTP',
+    });
+    assert.equal(status, 402);
+    assert.match(body.message, /Yape|aprobación|OTP/i);
+
     nextChargeResponse = () => ({
       status: 201,
       body: {

@@ -20,6 +20,11 @@ export const CURRENCY = 'PEN';
 
 export const MAX_ITEM_QUANTITY = 20;
 
+/** Límite de Yape por operación según Culqi: S/ 2000. */
+export const YAPE_MAX_AMOUNT_CENTS = 200_000;
+
+export type YapePaymentMethod = 'card' | 'yape';
+
 export const isCulqiConfigured = CULQI_PUBLIC_KEY.startsWith('pk_live_') || CULQI_PUBLIC_KEY.startsWith('pk_test_');
 
 export const isCulqiTestMode = CULQI_PUBLIC_KEY.startsWith('pk_test_');

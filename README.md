@@ -142,22 +142,24 @@ automáticamente cuando el DNS propaga. No requiere cambios en el código.
 > `vercel.json` se eliminó: Firebase Hosting es el hosting oficial del proyecto. Vite sigue
 > detectando el framework correctamente, así que no hace falta configuración adicional.
 
-## Cobros con Culqi
+## Cobros con Culqi (Tarjeta + Yape)
 
-El sitio tiene carrito y pago en línea real:
+El sitio tiene carrito y pago en línea real con **Yape nativo**:
 
 - **Carrito** persistente en el navegador (`src/lib/cart.ts`), visible en el header y en cada
   producto.
-- **Checkout** (`src/components/CheckoutModal.tsx`): datos del cliente → Culqi Checkout Custom
-  (tarjeta y Yape) → cargo en el backend.
+- **Checkout** (`src/components/CheckoutModal.tsx`): datos del cliente → selector Tarjeta / Yape → Culqi Checkout Custom
+  → cargo en el backend. Yape usa token `ype_…` y código de aprobación de 6 dígitos (2 min vigencia, máx. S/ 2,000).
+- **Yape UX** (`src/lib/culqi.ts`): `paymentMethods: { tarjeta: true, yape: true }`, orden de pestañas según selección,
+  instrucciones paso a paso y validación de límite.
 - **Backend** (`functions/`): crea el pedido, recalcula el monto con `functions/catalog.json`
-  (nunca confía en el precio del navegador), reserva el pedido en Firestore y crea el cargo con la
-  llave secreta en Secret Manager.
+  (nunca confía en el precio del navegador), valida límite Yape, reserva el pedido en Firestore y crea el cargo con la
+  llave secreta en Secret Manager (`source_id = tkn_…` o `ype_…`).
 - **Webhook** (`POST /api/payments/webhooks/culqi`): re-consulta el cargo en Culqi y actualiza el
   pedido, sin confiar en el cuerpo del evento.
-- **Firestore** (`orders`): pedidos con estado `pending` / `processing` / `paid` / `failed`.
+- **Firestore** (`orders`): pedidos con estado `pending` / `processing` / `paid` / `failed` y `charge.brand = YAPE` para Yape.
 
-La puesta en marcha completa (llaves, secretos, webhook, pruebas y límites) está en
+La puesta en marcha completa (llaves, secretos, webhook, pruebas, flujo Yape y límites) está en
 **[`docs/culqi.md`](docs/culqi.md)**.
 
 > La llave secreta `sk_…` nunca debe estar en el repositorio, en `.env` versionados ni en el CMS.
