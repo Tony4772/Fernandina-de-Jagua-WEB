@@ -8,6 +8,9 @@
  * por lo que el `base` de Vite debe incluir el nombre del repositorio.
  *
  * Uso: npm run build:pages
+ *
+ * Requiere activar GitHub Pages (Settings → Pages → Deploy from a branch →
+ * rama y carpeta /docs). El resultado no se versiona: está en .gitignore.
  */
 import { cp, mkdir, readdir, rm, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';

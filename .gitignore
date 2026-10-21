@@ -7,3 +7,9 @@ coverage/
 .env*
 !.env.example
 .firebase/
+
+# Build publicado por scripts/build-pages.mjs (GitHub Pages)
+docs/index.html
+docs/assets/
+docs/favicon.svg
+docs/.nojekyll
