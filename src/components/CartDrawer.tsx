@@ -174,8 +174,19 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 className="w-full inline-flex items-center justify-center gap-space-xs px-space-lg py-space-sm rounded-lg bg-secondary text-on-secondary hover:bg-on-tertiary-container hover:text-on-primary font-label-md text-label-md uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
               >
                 <span className="material-symbols-outlined text-[18px]">credit_card</span>
-                <span>Pagar en línea</span>
+                <span>Pagar con Culqi</span>
               </button>
+
+              <div className="flex gap-space-xs">
+                <div className="flex-1 inline-flex items-center justify-center gap-1 px-2 py-2 rounded-lg bg-surface-container border border-surface-container-high text-[11px] font-label-md uppercase tracking-wider text-on-surface-variant">
+                  <span className="material-symbols-outlined text-[14px]">credit_card</span>
+                  Tarjeta
+                </div>
+                <div className="flex-1 inline-flex items-center justify-center gap-1 px-2 py-2 rounded-lg bg-[#742384]/10 border border-[#742384]/20 text-[11px] font-label-md uppercase tracking-wider text-[#742384]">
+                  <span className="material-symbols-outlined text-[14px]">phone_iphone</span>
+                  Yape
+                </div>
+              </div>
 
               <a
                 href={whatsappUrl}
@@ -187,8 +198,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 <span>Coordinar por WhatsApp</span>
               </a>
 
-              <p className="text-[11px] text-center text-on-surface-variant">
-                Pago seguro con Culqi · Tarjeta y Yape · No guardamos datos de tu tarjeta
+              <p className="text-[11px] text-center text-on-surface-variant leading-tight">
+                Pago seguro con Culqi · <strong>Tarjeta y Yape (hasta S/ 2,000)</strong> · Solo soles · No guardamos datos sensibles
               </p>
             </footer>
           </>

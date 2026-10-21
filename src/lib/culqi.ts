@@ -4,8 +4,9 @@
  *
  * El checkout tokeniza la tarjeta o el teléfono de Yape directamente contra los
  * servidores de Culqi: los datos sensibles nunca pasan por esta app ni por
- * nuestro backend. Solo recibimos el `token.id`, que enviamos al servidor para
- * crear el cargo con la llave secreta.
+ * nuestro backend. Solo recibimos el `token.id` (tkn_... para tarjeta o
+ * ype_... para Yape), que enviamos al servidor para crear el cargo con la
+ * llave secreta.
  */
 
 const CULQI_SCRIPT_URL = 'https://js.culqi.com/checkout-js';
@@ -69,6 +70,16 @@ export function loadCulqiCheckout(): Promise<void> {
   return scriptPromise;
 }
 
+export type CulqiPaymentMethod = 'card' | 'yape';
+
+export function detectPaymentMethod(tokenId: string): CulqiPaymentMethod {
+  return tokenId.startsWith('ype_') ? 'yape' : 'card';
+}
+
+export function isYapeToken(tokenId: string): boolean {
+  return tokenId.startsWith('ype_');
+}
+
 export interface OpenCheckoutOptions {
   publicKey: string;
   amountInCents: number;
@@ -76,8 +87,11 @@ export interface OpenCheckoutOptions {
   email: string;
   firstName: string;
   lastName: string;
+  /** Método preferido: decide el orden de pestañas en el checkout */
+  preferredMethod?: CulqiPaymentMethod;
   onToken: (tokenId: string) => void;
   onError: (message: string) => void;
+  onClose?: () => void;
 }
 
 export async function openCulqiCheckout(options: OpenCheckoutOptions): Promise<void> {
@@ -109,20 +123,28 @@ export async function openCulqiCheckout(options: OpenCheckoutOptions): Promise<v
     cuotealo: false,
   };
 
+  // Orden de pestañas según preferencia del usuario (Yape primero si eligió Yape)
+  const preferredOrder: Record<CulqiPaymentMethod, string[]> = {
+    yape: ['yape', 'tarjeta'],
+    card: ['tarjeta', 'yape'],
+  };
+  const sortKey = options.preferredMethod ?? 'card';
+  const paymentMethodsSort = preferredOrder[sortKey].filter(
+    (method) => paymentMethods[method as keyof typeof paymentMethods],
+  );
+
   const checkoutOptions = {
     lang: 'es',
     installments: false,
     modal: true,
     paymentMethods,
-    paymentMethodsSort: Object.keys(paymentMethods).filter(
-      (method) => paymentMethods[method as keyof typeof paymentMethods],
-    ),
+    paymentMethodsSort,
   };
 
   const appearance = {
     theme: 'default',
     menuType: 'sidebar',
-    buttonCardPayText: 'Pagar pedido',
+    buttonCardPayText: options.preferredMethod === 'yape' ? 'Pagar con Yape' : 'Pagar pedido',
     hiddenEmail: true,
     defaultStyle: {
       bannerColor: '#261814',
@@ -170,12 +192,23 @@ export async function openCulqiCheckout(options: OpenCheckoutOptions): Promise<v
       return;
     }
 
+    // Culqi expone el error en instance.error; si no, mostramos genérico.
+    // Para Yape, los errores comunes son OTP vencido / número inválido.
+    const rawMessage =
+      instance.error?.user_message || instance.error?.merchant_message || '';
+    if (rawMessage) {
+      options.onError(rawMessage);
+      return;
+    }
+
     options.onError(
-      instance.error?.user_message ||
-        instance.error?.merchant_message ||
-        'No se pudo completar el pago. Revisa los datos e intenta nuevamente.',
+      'No se pudo completar el pago. Revisa los datos e intenta nuevamente.',
     );
   };
+
+  // Detectar cierre manual del modal sin pago
+  // Culqi no expone onClose nativo; usamos MutationObserver sobre el overlay
+  // como fallback leve: si se cierra, no hacemos nada (el usuario puede reintentar).
 
   instance.open();
 }

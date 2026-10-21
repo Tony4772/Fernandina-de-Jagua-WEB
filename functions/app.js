@@ -13,6 +13,7 @@ const CULQI_API = 'https://api.culqi.com/v2';
 const CURRENCY = 'PEN';
 const MIN_AMOUNT = 100; // S/ 1.00
 const MAX_AMOUNT = 700000; // S/ 7,000.00
+const YAPE_MAX_AMOUNT = 200000; // S/ 2,000.00 — límite Yape impuesto por Culqi
 const MAX_ITEMS = 20;
 const MAX_QTY_PER_ITEM = 20;
 const ORDER_TTL_MS = 30 * 60 * 1000; // 30 minutos para pagar
@@ -142,18 +143,35 @@ async function culqiRequest(path, { method = 'GET', body, secretKey } = {}) {
   return { ok: response.ok, status: response.status, payload };
 }
 
-function culqiErrorMessage(payload) {
+function culqiErrorMessage(payload, { isYape = false } = {}) {
   if (!payload) return 'No pudimos procesar el pago.';
-  return (
+  const base =
     payload.user_message ||
     payload.merchant_message ||
     payload.message ||
-    'No pudimos procesar el pago. Revisa los datos de tu tarjeta.'
-  );
+    (isYape
+      ? 'No pudimos procesar el pago con Yape. Verifica el código y vuelve a intentar.'
+      : 'No pudimos procesar el pago. Revisa los datos de tu tarjeta.');
+  return base;
 }
 
 function brandFromPayment(payload) {
+  // Para Yape el source puede venir como { type: 'yape' } sin brand.
+  if (payload?.source?.type === 'yape') return 'YAPE';
   return payload?.source?.brand ?? payload?.source?.iin?.card_brand ?? null;
+}
+
+export function isYapeToken(token) {
+  return typeof token === 'string' && token.startsWith('ype_');
+}
+
+export function isValidPaymentToken(token) {
+  return /^(tkn|ype)_(live|test)_[A-Za-z0-9]+$/.test(token);
+}
+
+export function getPaymentMethod(token) {
+  if (isYapeToken(token)) return 'yape';
+  return 'card';
 }
 
 export function createApp({ db, getSecret }) {
@@ -188,22 +206,25 @@ export function createApp({ db, getSecret }) {
   });
 
   // Límite simple en memoria por instancia (protección básica contra abuso).
-  const rateBuckets = new Map();
-  const rateLimit = ({ max, windowMs }) => (req, res, next) => {
-    const ip = req.ip || req.headers['x-forwarded-for'] || 'desconocida';
-    const now = Date.now();
-    const recent = (rateBuckets.get(ip) ?? []).filter((timestamp) => now - timestamp < windowMs);
-    if (recent.length >= max) {
-      res.status(429).json({
-        error: 'rate_limited',
-        message: 'Demasiados intentos. Espera un momento y vuelve a intentar.',
-      });
-      return;
-    }
-    recent.push(now);
-    rateBuckets.set(ip, recent);
-    if (rateBuckets.size > 5000) rateBuckets.clear();
-    next();
+  // Cada endpoint tiene su propio bucket para que los límites no se acumulen entre sí.
+  const rateLimit = ({ max, windowMs }) => {
+    const buckets = new Map();
+    return (req, res, next) => {
+      const ip = req.ip || req.headers['x-forwarded-for'] || 'desconocida';
+      const now = Date.now();
+      const recent = (buckets.get(ip) ?? []).filter((timestamp) => now - timestamp < windowMs);
+      if (recent.length >= max) {
+        res.status(429).json({
+          error: 'rate_limited',
+          message: 'Demasiados intentos. Espera un momento y vuelve a intentar.',
+        });
+        return;
+      }
+      recent.push(now);
+      buckets.set(ip, recent);
+      if (buckets.size > 5000) buckets.clear();
+      next();
+    };
   };
 
   const router = express.Router();
@@ -270,9 +291,12 @@ export function createApp({ db, getSecret }) {
       const token = cleanText(req.body?.token, 80);
 
       try {
-        if (!/^tkn_(live|test)_[A-Za-z0-9]+$/.test(token)) {
+        if (!isValidPaymentToken(token)) {
           throw new HttpError(400, 'El token de pago no es válido. Intenta nuevamente.');
         }
+
+        // Yape tiene tope de S/ 2,000 por operación (regla Culqi/Yape)
+        const paymentMethod = getPaymentMethod(token);
 
         const secretKey = secret('CULQI_SECRET_KEY');
         if (!secretKey) {
@@ -306,7 +330,21 @@ export function createApp({ db, getSecret }) {
           return data;
         });
 
+        // Validación de límite Yape: debe hacerse tras conocer el monto del pedido
+        if (paymentMethod === 'yape' && order.amount > YAPE_MAX_AMOUNT) {
+          await orderRef.update({
+            status: 'failed',
+            updatedAt: Timestamp.now(),
+            lastError: 'Monto excede límite Yape (S/ 2,000).',
+          });
+          throw new HttpError(
+            400,
+            'Yape permite un máximo de S/ 2,000 por operación. Reduce el carrito o paga con tarjeta.',
+          );
+        }
+
         const [firstName, ...rest] = order.customer.name.split(' ');
+        const isYape = paymentMethod === 'yape';
         const chargeBody = {
           amount: order.amount,
           currency_code: order.currency ?? CURRENCY,
@@ -325,6 +363,7 @@ export function createApp({ db, getSecret }) {
           metadata: {
             order_id: orderId,
             order_number: order.orderNumber,
+            payment_method: paymentMethod,
           },
         };
 
@@ -349,7 +388,7 @@ export function createApp({ db, getSecret }) {
             payload.paid === true);
 
         if (!approved) {
-          const message = culqiErrorMessage(payload);
+          const message = culqiErrorMessage(payload, { isYape });
           await orderRef.update({
             status: 'failed',
             updatedAt: Timestamp.now(),
@@ -360,10 +399,12 @@ export function createApp({ db, getSecret }) {
               declineCode: payload.decline_code ?? null,
               message,
               brand: brandFromPayment(payload),
+              paymentMethod,
             },
           });
           logger.warn('Cargo rechazado', {
             orderId,
+            paymentMethod,
             status: charge.status,
             code: payload.outcome?.code ?? payload.code ?? null,
             declineCode: payload.decline_code ?? null,
@@ -387,6 +428,7 @@ export function createApp({ db, getSecret }) {
             amount: payload.amount,
             currency: payload.currency_code,
             brand: brandFromPayment(payload),
+            paymentMethod,
             referenceCode: payload.reference_code ?? null,
             authorizationCode: payload.authorization_code ?? null,
             message: payload.outcome?.merchant_message ?? null,
@@ -397,6 +439,7 @@ export function createApp({ db, getSecret }) {
           orderId,
           orderNumber: order.orderNumber,
           chargeId: payload.id,
+          paymentMethod,
         });
 
         res.json({
