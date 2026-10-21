@@ -3,7 +3,7 @@ import { Product, SiteData } from '../types';
 export const DEFAULT_SITE_DATA: SiteData = {
   brand: {
     name: 'Fernandina de Jagua',
-    subName: 'Chocolates · San Miguel',
+    subName: 'Chocolates',
     tagline: 'Chocolatería artesanal en San Miguel',
     companyName: 'EBYZOM E.I.R.L.',
     address: 'Jr. Comandante Juan Guillermo Moore 296',
@@ -284,10 +284,14 @@ export function loadStoredSiteData(): SiteData {
     if (!raw) return DEFAULT_SITE_DATA;
     const parsed = JSON.parse(raw);
     if (parsed && parsed.brand && parsed.products && Array.isArray(parsed.products)) {
+      const brand = { ...DEFAULT_SITE_DATA.brand, ...(parsed.brand || {}) };
+      if (/^chocolates(?:\s*[·•]\s*san miguel)?$/i.test(brand.subName.trim())) {
+        brand.subName = 'Chocolates';
+      }
       return {
         ...DEFAULT_SITE_DATA,
         ...parsed,
-        brand: { ...DEFAULT_SITE_DATA.brand, ...(parsed.brand || {}) },
+        brand,
         home: { ...DEFAULT_SITE_DATA.home, ...(parsed.home || {}) },
         catalog: { ...DEFAULT_SITE_DATA.catalog, ...(parsed.catalog || {}) },
         visit: { ...DEFAULT_SITE_DATA.visit, ...(parsed.visit || {}) },

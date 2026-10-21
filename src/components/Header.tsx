@@ -59,8 +59,10 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="font-headline-sm text-headline-sm tracking-tight text-on-primary-fixed leading-tight">
               {brand.name}
             </span>
-            <span className="font-label-sm text-label-sm uppercase tracking-widest text-on-tertiary-container">
-              {brand.subName}
+            <span className="flex w-full justify-between whitespace-nowrap font-label-sm text-label-sm uppercase tracking-normal text-on-tertiary-container leading-none">
+              {Array.from(brand.subName.toUpperCase()).map((character, index) => (
+                <span key={`${character}-${index}`}>{character}</span>
+              ))}
             </span>
           </div>
         </button>

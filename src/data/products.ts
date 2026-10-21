@@ -2,7 +2,7 @@ import { Product } from '../types';
 
 export const BRAND_INFO = {
   name: 'Fernandina de Jagua',
-  subName: 'Chocolates · San Miguel',
+  subName: 'Chocolates',
   tagline: 'Chocolatería artesanal en San Miguel',
   companyName: 'EBYZOM E.I.R.L.',
   address: 'Jr. Comandante Juan Guillermo Moore 296',
