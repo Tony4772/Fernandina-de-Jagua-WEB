@@ -38,16 +38,16 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="fixed top-0 inset-x-0 z-50 bg-surface/90 backdrop-blur-md shadow-[0_1px_8px_rgba(34,21,17,0.05)] border-b border-surface-container-high/40">
-      <div className="h-20 max-w-[1320px] mx-auto px-margin md:px-margin-tablet lg:px-margin-desktop flex items-center justify-between">
+      <div className="h-20 max-w-[1320px] mx-auto px-3 sm:px-margin md:px-margin-tablet lg:px-margin-desktop flex items-center justify-between">
         {/* Brand identity lockup */}
         <button
           onClick={() => handleNav('inicio')}
-          className="flex items-center gap-space-sm text-left focus:outline-none cursor-pointer group"
+          className="flex items-center gap-2 sm:gap-space-sm text-left focus:outline-none cursor-pointer group"
           aria-label="Ir a Inicio"
         >
           <img
             alt={brand.name}
-            className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            className="h-8 sm:h-10 w-auto shrink-0 object-contain transition-transform duration-300 group-hover:scale-105"
             src={brand.logoUrl}
             referrerPolicy="no-referrer"
             onError={(event) => {
@@ -55,8 +55,11 @@ export const Header: React.FC<HeaderProps> = ({
               event.currentTarget.src = '/favicon.svg';
             }}
           />
-          <div className="flex flex-col">
-            <span className="font-headline-sm text-headline-sm tracking-tight text-on-primary-fixed leading-tight">
+          <div className="flex min-w-0 flex-col">
+            <span
+              className="font-headline-sm whitespace-nowrap tracking-tight text-on-primary-fixed leading-tight"
+              style={{ fontSize: 'clamp(0.875rem, 4vw, 1.25rem)' }}
+            >
               {brand.name}
             </span>
             <span className="flex w-full justify-between whitespace-nowrap font-label-sm text-label-sm uppercase tracking-normal text-on-tertiary-container leading-none">
@@ -102,11 +105,11 @@ export const Header: React.FC<HeaderProps> = ({
         </nav>
 
         {/* Action Elements */}
-        <div className="flex items-center gap-space-md">
+        <div className="flex items-center gap-2 sm:gap-space-md">
           {/* Shopping cart icon and live summary */}
           <button
             onClick={onOpenCart}
-            className="relative inline-flex min-h-10 min-w-10 items-center justify-center gap-2 rounded-full border border-surface-container-high bg-surface-container-low px-2.5 text-on-primary-fixed transition-colors hover:bg-surface-container-highest cursor-pointer"
+            className="relative inline-flex min-h-9 min-w-9 items-center justify-center gap-2 rounded-full border border-surface-container-high bg-surface-container-low px-2 sm:min-h-10 sm:min-w-10 sm:px-2.5 text-on-primary-fixed transition-colors hover:bg-surface-container-highest cursor-pointer"
             title={cartCount > 0 ? `Ver carrito · ${formatSoles(cartSubtotal)}` : 'Abrir carrito'}
             aria-label={
               cartCount > 0
@@ -141,7 +144,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={onOpenConcierge}
-            className="w-8 h-8 rounded-full bg-primary flex items-center justify-center cursor-pointer hover:bg-on-tertiary-container transition-colors shadow-sm"
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-primary flex items-center justify-center cursor-pointer hover:bg-on-tertiary-container transition-colors shadow-sm"
             title="Atelier y Atención Personalizada"
             aria-label="Atelier y Atención Personalizada"
           >
@@ -151,7 +154,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Mobile hamburger menu toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-on-surface hover:text-on-primary-fixed cursor-pointer transition-colors"
+            className="md:hidden w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-surface-container flex items-center justify-center text-on-surface hover:text-on-primary-fixed cursor-pointer transition-colors"
             aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
           >
             <span className="material-symbols-outlined text-[20px]">
