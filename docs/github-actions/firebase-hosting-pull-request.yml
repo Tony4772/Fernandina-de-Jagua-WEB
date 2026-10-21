@@ -1,0 +1,61 @@
+name: Preview de Firebase Hosting (pull requests)
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  checks: write
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: firebase-hosting-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build_and_preview:
+    name: Build y canal de preview
+    runs-on: ubuntu-latest
+    # No se ejecuta en PRs de forks porque no tienen acceso a los secretos.
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Instalar dependencias del backend de pagos
+        run: npm --prefix functions ci
+
+      - name: Comprobar que el secreto de Firebase existe
+        id: check_secret
+        env:
+          FIREBASE_SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FERNANDINA_DE_JAGUA_WEB }}
+        run: |
+          if [ -z "$FIREBASE_SA" ]; then
+            echo "::warning::Falta el secreto FIREBASE_SERVICE_ACCOUNT_FERNANDINA_DE_JAGUA_WEB; se omite el despliegue."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Compilar el sitio
+        run: npm run build
+
+      - name: Publicar canal de preview
+        if: steps.check_secret.outputs.ready == 'true'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FERNANDINA_DE_JAGUA_WEB }}
+          projectId: fernandina-de-jagua-web
+          expires: 7d

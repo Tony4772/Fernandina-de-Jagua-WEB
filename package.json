@@ -1,14 +1,25 @@
 {
-  "name": "react-example",
+  "name": "fernandina-de-jagua-web",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
-    "build": "vite build",
+    "build": "node scripts/sync-catalog.mjs && vite build",
+    "build:pages": "node scripts/sync-catalog.mjs && node scripts/build-pages.mjs",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "catalog:sync": "node scripts/sync-catalog.mjs",
+    "install:functions": "npm --prefix functions install",
+    "emulators": "npm run build && firebase emulators:start",
+    "serve": "npm run build && firebase emulators:start --only hosting,functions",
+    "deploy": "npm run install:functions && npm run build && firebase deploy",
+    "go-live": "bash scripts/go-live.sh",
+    "deploy:hosting": "npm run build && firebase deploy --only hosting",
+    "deploy:functions": "npm run install:functions && firebase deploy --only functions",
+    "deploy:rules": "firebase deploy --only firestore:rules",
+    "deploy:preview": "npm run build && firebase hosting:channel:deploy preview --expires 7d"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
@@ -23,14 +34,16 @@
     "motion": "^12.23.24"
   },
   "devDependencies": {
+    "@types/express": "^4.17.21",
     "@types/node": "^22.14.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "autoprefixer": "^10.4.21",
     "esbuild": "^0.28.0",
+    "firebase-tools": "^15.34.0",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.21.0",
-    "typescript": "^7.0.2",
-    "@types/express": "^4.17.21"
-  }
+    "typescript": "^7.0.2"
+  },
+  "description": "Sitio web de Fernandina de Jagua Chocolates (San Miguel, Lima) — React + Vite, desplegado en Firebase Hosting."
 }

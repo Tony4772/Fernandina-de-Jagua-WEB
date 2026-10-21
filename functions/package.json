@@ -1,0 +1,21 @@
+{
+  "name": "fernandina-payments",
+  "description": "Backend de pagos (Culqi) para fernandina-de-jagua-web",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "logs": "firebase functions:log",
+    "test": "node test/smoke.mjs"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "firebase-admin": "^14.5.0",
+    "firebase-functions": "^7.4.0"
+  }
+}

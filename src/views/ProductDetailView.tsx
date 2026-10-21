@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PageRoute, Product, SiteData } from '../types';
+import { formatSoles, MAX_ITEM_QUANTITY } from '../lib/cart';
 
 interface ProductDetailViewProps {
   product: Product;
@@ -7,6 +8,7 @@ interface ProductDetailViewProps {
   onRouteChange: (route: PageRoute) => void;
   onSelectProduct: (product: Product) => void;
   onOpenAndroid: () => void;
+  onAddToCart: (product: Product, quantity: number) => void;
 }
 
 export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
@@ -15,8 +17,10 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   onRouteChange,
   onSelectProduct,
   onOpenAndroid,
+  onAddToCart,
 }) => {
   const { brand, products } = siteData;
+  const [quantity, setQuantity] = useState(1);
 
   const whatsappOrderUrl = `${brand.whatsappUrl}?text=${encodeURIComponent(
     `Hola, quisiera pedir la ${product.name} (${product.price}).`
@@ -156,6 +160,45 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
               {/* Direct Ordering Actions */}
               <div className="flex flex-col gap-space-sm mb-space-md">
+                <div className="flex items-center gap-space-sm">
+                  <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">
+                    Cantidad
+                  </span>
+                  <div className="inline-flex items-center rounded-lg border border-surface-container-high overflow-hidden">
+                    <button
+                      type="button"
+                      onClick={() => setQuantity((current) => Math.max(1, current - 1))}
+                      className="w-9 h-9 flex items-center justify-center text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
+                      aria-label="Disminuir cantidad"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">remove</span>
+                    </button>
+                    <span className="w-10 text-center font-label-md text-label-md text-on-primary-fixed">
+                      {quantity}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setQuantity((current) => Math.min(MAX_ITEM_QUANTITY, current + 1))}
+                      className="w-9 h-9 flex items-center justify-center text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
+                      aria-label="Aumentar cantidad"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">add</span>
+                    </button>
+                  </div>
+                  <span className="ml-auto font-title-md text-title-md text-secondary font-bold">
+                    {formatSoles(product.priceValue * quantity)}
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => onAddToCart(product, quantity)}
+                  className="w-full flex items-center justify-center gap-space-sm py-space-sm px-space-md rounded-lg bg-primary-container text-surface-bright hover:bg-[#33211b] transition-all duration-200 shadow-md font-label-md text-label-md uppercase tracking-widest text-center cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-[18px]">add_shopping_cart</span>
+                  <span>Agregar al carrito y pagar en línea</span>
+                </button>
+
                 <a
                   className="w-full flex items-center justify-center gap-space-sm py-space-sm px-space-md rounded-lg bg-secondary text-on-secondary hover:bg-on-tertiary-container transition-all duration-200 shadow-md font-label-md text-label-md uppercase tracking-widest text-center cursor-pointer"
                   href={whatsappOrderUrl}
@@ -181,7 +224,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                   info
                 </span>
                 <p className="font-body-sm text-body-sm text-on-surface-variant italic leading-snug">
-                  Los pedidos se coordinan de forma personalizada por WhatsApp o mediante nuestra aplicación para Android.
+                  Puedes pagar en línea con tarjeta o Yape (Culqi), o coordinar tu pedido de forma personalizada por WhatsApp o mediante nuestra aplicación para Android.
                 </p>
               </div>
 

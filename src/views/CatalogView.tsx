@@ -6,6 +6,8 @@ interface CatalogViewProps {
   onSelectProduct: (product: Product) => void;
   onOpenProductModal: (product: Product) => void;
   onOpenAndroid: () => void;
+  onAddToCart: (product: Product) => void;
+  onOpenCart: () => void;
 }
 
 export const CatalogView: React.FC<CatalogViewProps> = ({
@@ -13,6 +15,8 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
   onSelectProduct,
   onOpenProductModal,
   onOpenAndroid,
+  onAddToCart,
+  onOpenCart,
 }) => {
   const { brand, catalog, products } = siteData;
   const [activeCategory, setActiveCategory] = useState<string>('all');
@@ -128,17 +132,31 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                   </p>
                 </div>
 
-                <div className="pt-space-xs flex items-center justify-between border-t border-surface-container-high/40">
-                  <span className="font-title-md text-title-md text-on-primary-fixed font-bold">
-                    {product.price}
-                  </span>
+                <div className="pt-space-xs flex flex-col gap-space-xs border-t border-surface-container-high/40">
+                  <div className="flex items-center justify-between">
+                    <span className="font-title-md text-title-md text-on-primary-fixed font-bold">
+                      {product.price}
+                    </span>
+                    <button
+                      onClick={() => onOpenProductModal(product)}
+                      className="inline-flex items-center gap-1 font-label-md text-label-md text-secondary hover:text-on-tertiary-container transition-colors uppercase tracking-wider cursor-pointer"
+                      type="button"
+                    >
+                      <span>Ver detalle</span>
+                      <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                    </button>
+                  </div>
+
                   <button
-                    onClick={() => onOpenProductModal(product)}
-                    className="inline-flex items-center gap-1 font-label-md text-label-md text-secondary hover:text-on-tertiary-container transition-colors uppercase tracking-wider cursor-pointer"
+                    onClick={() => {
+                      onAddToCart(product);
+                      onOpenCart();
+                    }}
+                    className="w-full inline-flex items-center justify-center gap-1.5 px-space-sm py-space-xs rounded-lg bg-secondary text-on-secondary hover:bg-on-tertiary-container hover:text-on-primary font-label-md text-label-md uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
                     type="button"
                   >
-                    <span>Ver detalle</span>
-                    <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                    <span className="material-symbols-outlined text-[16px]">add_shopping_cart</span>
+                    <span>Agregar al carrito</span>
                   </button>
                 </div>
               </div>

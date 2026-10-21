@@ -13,6 +13,17 @@ import { AndroidModal } from './components/AndroidModal';
 import { ConciergeModal } from './components/ConciergeModal';
 import { PrivacyModal } from './components/PrivacyModal';
 import { AdminLoginModal } from './components/AdminLoginModal';
+import { CartDrawer } from './components/CartDrawer';
+import { CheckoutModal } from './components/CheckoutModal';
+import {
+  addToCart,
+  cartCount,
+  CartItem,
+  loadCart,
+  removeFromCart,
+  saveCart,
+  updateCartQuantity,
+} from './lib/cart';
 
 export default function App() {
   const [siteData, setSiteData] = useState<SiteData>(() => loadStoredSiteData());
@@ -23,6 +34,10 @@ export default function App() {
   const [conciergeModalOpen, setConciergeModalOpen] = useState(false);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const [adminLoginModalOpen, setAdminLoginModalOpen] = useState(false);
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => loadCart());
+  const [cartOpen, setCartOpen] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [cartToast, setCartToast] = useState<string | null>(null);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
     return sessionStorage.getItem('fernandina_admin_session') === 'active';
   });
@@ -48,6 +63,38 @@ export default function App() {
     if (defaultData.products.length > 0) {
       setSelectedProduct(defaultData.products[0]);
     }
+  };
+
+  const persistCart = (items: CartItem[]) => {
+    setCartItems(items);
+    saveCart(items);
+  };
+
+  const handleAddToCart = (product: Product, quantity = 1) => {
+    persistCart(addToCart(cartItems, product, quantity));
+    setCartToast(`${product.name} agregado al carrito`);
+    window.setTimeout(() => setCartToast(null), 2600);
+  };
+
+  const handleUpdateCartQuantity = (productId: string, quantity: number) => {
+    persistCart(updateCartQuantity(cartItems, productId, quantity));
+  };
+
+  const handleRemoveFromCart = (productId: string) => {
+    persistCart(removeFromCart(cartItems, productId));
+  };
+
+  const handleOpenCheckout = () => {
+    setCartOpen(false);
+    setCheckoutOpen(true);
+  };
+
+  const handlePaid = () => {
+    persistCart([]);
+  };
+
+  const handleCloseCheckout = () => {
+    setCheckoutOpen(false);
   };
 
   const handleRouteChange = (route: PageRoute) => {
@@ -112,6 +159,8 @@ export default function App() {
         onOpenAdmin={handleOpenAdmin}
         isAdminLoggedIn={isAdminLoggedIn}
         brand={siteData.brand}
+        cartCount={cartCount(cartItems)}
+        onOpenCart={() => setCartOpen(true)}
       />
 
       {/* Main viewport */}
@@ -131,6 +180,8 @@ export default function App() {
             onSelectProduct={handleSelectProduct}
             onOpenProductModal={handleOpenProductModal}
             onOpenAndroid={() => setAndroidModalOpen(true)}
+            onAddToCart={(product) => handleAddToCart(product)}
+            onOpenCart={() => setCartOpen(true)}
           />
         )}
 
@@ -141,6 +192,7 @@ export default function App() {
             onRouteChange={handleRouteChange}
             onSelectProduct={handleSelectProduct}
             onOpenAndroid={() => setAndroidModalOpen(true)}
+            onAddToCart={(product, quantity) => handleAddToCart(product, quantity)}
           />
         )}
 
@@ -191,6 +243,11 @@ export default function App() {
           handleSelectProduct(prod);
         }}
         brand={siteData.brand}
+        onAddToCart={(prod) => {
+          handleAddToCart(prod);
+          setModalProduct(null);
+          setCartOpen(true);
+        }}
       />
 
       <AndroidModal
@@ -215,6 +272,35 @@ export default function App() {
         onClose={() => setAdminLoginModalOpen(false)}
         onSuccess={handleLoginSuccess}
       />
+
+      <CartDrawer
+        isOpen={cartOpen}
+        items={cartItems}
+        brand={siteData.brand}
+        onClose={() => setCartOpen(false)}
+        onUpdateQuantity={handleUpdateCartQuantity}
+        onRemove={handleRemoveFromCart}
+        onCheckout={handleOpenCheckout}
+        onKeepShopping={() => {
+          setCartOpen(false);
+          handleRouteChange('productos');
+        }}
+      />
+
+      <CheckoutModal
+        isOpen={checkoutOpen}
+        items={cartItems}
+        brand={siteData.brand}
+        onClose={handleCloseCheckout}
+        onPaid={handlePaid}
+      />
+
+      {cartToast && (
+        <div className="fixed bottom-20 right-4 z-[65] max-w-xs bg-primary-container text-surface-bright px-space-sm py-space-xs rounded-xl shadow-2xl border border-secondary/50 flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
+          <span className="material-symbols-outlined text-secondary-fixed text-[18px]">check_circle</span>
+          <span className="font-body-sm text-body-sm">{cartToast}</span>
+        </div>
+      )}
     </div>
   );
 }
