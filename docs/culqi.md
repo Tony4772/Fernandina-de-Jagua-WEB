@@ -69,9 +69,17 @@ firebase functions:secrets:set CULQI_WEBHOOK_PASS    # contraseña que usarás e
 
 ## 4. Despliegue
 
+La forma más rápida es el script interactivo, que además configura los secretos:
+
+```bash
+npm run go-live           # requisitos + login + secretos + deploy + verificación
+npm run go-live -- --check  # solo verificar requisitos
+```
+
+O por partes:
+
 ```bash
 npm run deploy            # instala functions, build, deploy de hosting + functions + rules
-# o por partes:
 npm run deploy:functions
 npm run deploy:hosting
 npm run deploy:rules

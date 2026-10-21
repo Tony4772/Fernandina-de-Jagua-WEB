@@ -32,7 +32,24 @@ npm --prefix functions test   # pruebas del backend de pagos (sin red)
 
 ## Despliegue
 
-### Opción A — desde tu máquina (recomendado para el primer deploy)
+### Opción A — un solo comando (recomendado)
+
+```bash
+npm run go-live
+```
+
+Hace todo: comprueba requisitos, inicia sesión, guarda la llave secreta de Culqi en Secret Manager
+(por consola, sin escribirla en el disco), compila, despliega functions + hosting + reglas y verifica
+`/api/payments/health`. Al final imprime la URL del webhook y las credenciales que debes pegar en el
+panel de Culqi.
+
+Solo verificar sin publicar:
+
+```bash
+npm run go-live -- --check
+```
+
+### Opción B — manual, paso a paso
 
 ```bash
 npx firebase login              # una sola vez, abre el navegador
@@ -57,7 +74,7 @@ npm run deploy:hosting     # solo el sitio
 npm run deploy:rules       # solo reglas de Firestore
 ```
 
-### Opción B — canal de preview (sin tocar producción)
+### Opción C — canal de preview (sin tocar producción)
 
 ```bash
 npm run deploy:preview
@@ -66,7 +83,7 @@ npm run deploy:preview
 Publica en una URL temporal tipo
 `https://fernandina-de-jagua-web--preview-xxxx.web.app`, válida 7 días.
 
-### Opción C — automático desde GitHub (GitHub Actions)
+### Opción D — automático desde GitHub (GitHub Actions)
 
 Las definiciones están en **`docs/github-actions/`** como plantillas (no se pudieron subir
 directamente a `.github/workflows/` por permisos del token que las creó). Para activarlas:
