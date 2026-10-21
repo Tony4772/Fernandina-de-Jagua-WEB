@@ -1,5 +1,6 @@
 import React from 'react';
 import { PageRoute, Product, SiteData } from '../types';
+import { googleMapsEmbedUrl } from '../lib/maps';
 
 interface HomeViewProps {
   siteData: SiteData;
@@ -302,10 +303,14 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 }}
                 className="relative w-full h-[380px] rounded-xl overflow-hidden shadow-sm bg-surface-container group cursor-pointer border border-surface-container-high"
               >
-                <div
-                  className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-out"
-                  style={{ backgroundImage: `url('${brand.mapImageUrl}')` }}
-                ></div>
+                <iframe
+                  title={`Mapa de ${brand.address}, ${brand.district}`}
+                  src={googleMapsEmbedUrl(brand.address, brand.district)}
+                  className="absolute inset-0 h-full w-full border-0"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
                 <div className="absolute inset-0 bg-primary-container/10 group-hover:bg-transparent transition-colors"></div>
                 <div className="absolute bottom-4 left-4 right-4 bg-surface-container-lowest/90 backdrop-blur-md p-space-sm rounded-lg flex items-center justify-between shadow-md">
                   <div className="flex items-center gap-2">

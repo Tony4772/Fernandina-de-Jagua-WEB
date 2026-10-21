@@ -1,5 +1,6 @@
 import React from 'react';
 import { SiteData } from '../types';
+import { googleMapsEmbedUrl, googleMapsSearchUrl } from '../lib/maps';
 
 interface VisitUsViewProps {
   siteData: SiteData;
@@ -209,7 +210,7 @@ export const VisitUsView: React.FC<VisitUsViewProps> = ({ siteData, onOpenAndroi
                 </div>
                 <a
                   className="inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-lg bg-surface-container-lowest text-on-surface hover:bg-secondary-fixed hover:text-on-secondary-fixed transition-colors font-label-md text-label-md uppercase tracking-wider shadow-sm self-start sm:self-auto cursor-pointer"
-                  href={brand.googleMapsUrl}
+                  href={googleMapsSearchUrl(brand.address, brand.district)}
                   rel="noopener noreferrer"
                   target="_blank"
                 >
@@ -220,36 +221,14 @@ export const VisitUsView: React.FC<VisitUsViewProps> = ({ siteData, onOpenAndroi
 
               {/* Map Graphic Wrapper */}
               <div className="relative w-full flex-1 min-h-[380px] lg:min-h-[460px] rounded-lg overflow-hidden shadow-inner">
-                {/* Google Maps Static Pipeline Target */}
-                <div
-                  className="w-full h-full bg-cover bg-center"
-                  style={{ backgroundImage: `url('${brand.mapImageUrl}')` }}
-                ></div>
-
-                {/* Warm artisanal tint overlay matching cacao/gold aesthetic */}
-                <div className="absolute inset-0 bg-gradient-to-t from-primary-container/70 via-transparent to-primary-container/20 pointer-events-none"></div>
-
-                {/* Custom Gold Pin & Pin card overlay */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-none">
-                  <div className="px-space-md py-space-xs rounded-lg bg-primary-container/95 text-surface-bright shadow-xl backdrop-blur-sm flex items-center gap-space-xs mb-2 animate-bounce border border-secondary/30">
-                    <span className="w-2 h-2 rounded-full bg-secondary-fixed-dim"></span>
-                    <span className="font-label-md text-label-md uppercase tracking-wider">
-                      {brand.name}
-                    </span>
-                  </div>
-                  <div className="relative flex items-center justify-center">
-                    <span className="w-10 h-10 rounded-full bg-secondary/80 animate-ping absolute"></span>
-                    <div className="w-9 h-9 rounded-full bg-secondary text-surface-bright flex items-center justify-center shadow-lg">
-                      <span
-                        className="material-symbols-outlined text-[20px]"
-                        style={{ fontVariationSettings: "'FILL' 1" }}
-                      >
-                        restaurant
-                      </span>
-                    </div>
-                  </div>
-                  <div className="w-1 h-3 bg-secondary"></div>
-                </div>
+                <iframe
+                  title={`Mapa de ${brand.address}, ${brand.district}`}
+                  src={googleMapsEmbedUrl(brand.address, brand.district)}
+                  className="absolute inset-0 h-full w-full border-0"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
 
                 {/* Floating Quick Action Badge at bottom of map */}
                 <div className="absolute bottom-space-md left-space-md right-space-md sm:right-auto bg-surface-container-lowest/95 backdrop-blur-md p-space-sm rounded-lg shadow-lg max-w-sm border border-surface-container-high">
@@ -267,7 +246,7 @@ export const VisitUsView: React.FC<VisitUsViewProps> = ({ siteData, onOpenAndroi
                     </div>
                     <a
                       className="ml-auto p-1.5 rounded bg-surface-container-high text-on-surface hover:text-secondary transition-colors"
-                      href={brand.googleMapsUrl}
+                      href={googleMapsSearchUrl(brand.address, brand.district)}
                       rel="noopener noreferrer"
                       target="_blank"
                       title="Cómo llegar"
@@ -418,7 +397,7 @@ export const VisitUsView: React.FC<VisitUsViewProps> = ({ siteData, onOpenAndroi
             </a>
             <a
               className="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs px-space-md py-space-sm rounded-lg bg-surface-container-high/20 text-surface-bright hover:bg-surface-container-high/40 transition-colors font-label-md text-label-md uppercase tracking-wider text-center cursor-pointer"
-              href={brand.googleMapsUrl}
+              href={googleMapsSearchUrl(brand.address, brand.district)}
               rel="noopener noreferrer"
               target="_blank"
             >

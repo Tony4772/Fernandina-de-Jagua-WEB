@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Product, ProductCategory, SiteData } from '../types';
 import { updateAdminPassword } from '../data/cmsStore';
+import { googleMapsEmbedUrl, googleMapsSearchUrl } from '../lib/maps';
 
 interface AdminViewProps {
   siteData: SiteData;
@@ -897,25 +898,24 @@ export const AdminView: React.FC<AdminViewProps> = ({
                 </div>
               </div>
 
-              {/* Map Image */}
+              {/* Address-based Google Maps preview */}
               <div className="bg-[#1c120e] p-4 rounded-xl border border-[#38221b] space-y-3">
                 <span className="text-xs font-label-md uppercase text-secondary font-semibold block">
-                  Imagen de Cartografía / Mapa de San Miguel
+                  Mapa de la Dirección Configurada
                 </span>
                 <div className="h-28 bg-[#2d1c16] rounded overflow-hidden">
-                  <img src={siteData.brand.mapImageUrl} alt="Mapa" className="w-full h-full object-cover" />
-                </div>
-                <div>
-                  <label className="text-[11px] uppercase text-primary-fixed-dim block mb-1">
-                    URL de la Imagen del Mapa
-                  </label>
-                  <input
-                    type="text"
-                    value={siteData.brand.mapImageUrl}
-                    onChange={(e) => handleUpdateBrand('mapImageUrl', e.target.value)}
-                    className="w-full p-2 text-xs rounded bg-[#150d0a] border border-[#38221b] text-surface focus:border-secondary focus:outline-none"
+                  <iframe
+                    title={`Mapa de ${siteData.brand.address}, ${siteData.brand.district}`}
+                    src={googleMapsEmbedUrl(siteData.brand.address, siteData.brand.district)}
+                    className="h-full w-full border-0"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    allowFullScreen
                   />
                 </div>
+                <p className="text-xs text-primary-fixed-dim">
+                  El mapa y el enlace se calculan automáticamente desde la dirección y el distrito configurados.
+                </p>
               </div>
 
               {/* Ambient Background */}
@@ -1029,14 +1029,19 @@ export const AdminView: React.FC<AdminViewProps> = ({
               </div>
               <div>
                 <label className="block text-xs uppercase text-primary-fixed-dim mb-1 font-label-sm">
-                  URL de Google Maps
+                  Destino del mapa
                 </label>
-                <input
-                  type="text"
-                  value={siteData.brand.googleMapsUrl}
-                  onChange={(e) => handleUpdateBrand('googleMapsUrl', e.target.value)}
-                  className="w-full p-2.5 rounded bg-[#1a100d] border border-[#3e2821] text-surface focus:border-secondary focus:outline-none"
-                />
+                <a
+                  href={googleMapsSearchUrl(siteData.brand.address, siteData.brand.district)}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  className="inline-flex items-center gap-2 text-sm text-secondary underline underline-offset-4"
+                >
+                  Abrir la dirección configurada en Google Maps
+                </a>
+                <p className="mt-1 text-xs text-primary-fixed-dim">
+                  Para cambiar el destino, actualiza Dirección Física y Distrito y País.
+                </p>
               </div>
             </div>
 
