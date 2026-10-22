@@ -66,6 +66,13 @@
         }
       },
       {
+        "source": "/api/cms/**",
+        "function": {
+          "functionId": "cms",
+          "region": "us-central1"
+        }
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

@@ -57,6 +57,8 @@ npx firebase use fernandina-de-jagua-web
 
 # Antes del primer deploy, carga la llave secreta de Culqi (ver docs/culqi.md):
 npx firebase functions:secrets:set CULQI_SECRET_KEY
+# Clave privada para editar y sincronizar el CMS entre dispositivos:
+npx firebase functions:secrets:set CMS_ADMIN_PASSWORD
 
 npm run deploy                  # functions + hosting + reglas de Firestore
 ```
@@ -167,14 +169,15 @@ La puesta en marcha completa (llaves, secretos, webhook, pruebas, flujo Yape y l
 
 ## Panel de administración
 
-`/#admin` abre el panel de administración (`src/views/AdminView.tsx`). Actualmente el contenido
-y la contraseña se guardan en **`localStorage`** del navegador (`src/data/cmsStore.ts`), por lo que:
+`/#admin` abre el panel de administración (`src/views/AdminView.tsx`). El catálogo se carga desde
+Cloud Firestore a través de la función `/api/cms`, por lo que los productos, textos e imágenes son
+compartidos entre escritorio, móvil y demás visitantes. El navegador conserva un respaldo local
+como fallback, pero ya no es la fuente principal:
 
-- Los cambios **solo se ven en el navegador donde se editaron**.
-- Al limpiar los datos del navegador se pierden (usa la pestaña *Respaldo* para exportar el JSON).
-
-Para que el contenido sea compartido entre visitantes, el siguiente paso sería mover `cmsStore`
-a **Cloud Firestore**; el archivo está aislado justamente para facilitar esa migración.
+1. Configura `CMS_ADMIN_PASSWORD` en Secret Manager con `npx firebase functions:secrets:set CMS_ADMIN_PASSWORD`.
+2. Despliega functions y hosting.
+3. Inicia sesión en el CMS desde el escritorio; el catálogo local se migrará a Firestore en `cms/site`.
+4. Los siguientes cambios se sincronizan automáticamente para todos los dispositivos.
 
 > Importante para pagos: si cambias precios desde el panel admin, el backend seguirá cobrando con
 > `functions/catalog.json`. Actualiza `src/data/products.ts` y ejecuta `npm run catalog:sync`

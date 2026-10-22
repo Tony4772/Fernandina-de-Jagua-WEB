@@ -15,7 +15,8 @@ import { initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { onRequest } from 'firebase-functions/v2/https';
 import { createApp } from './app.js';
-import { CULQI_SECRET_KEY, CULQI_WEBHOOK_PASS, CULQI_WEBHOOK_USER } from './secrets.js';
+import { CULQI_SECRET_KEY, CULQI_WEBHOOK_PASS, CULQI_WEBHOOK_USER, CMS_ADMIN_PASSWORD } from './secrets.js';
+import { createCmsApp } from './cms.js';
 
 initializeApp();
 
@@ -48,4 +49,28 @@ export const payments = onRequest(
     secrets: [CULQI_SECRET_KEY, CULQI_WEBHOOK_USER, CULQI_WEBHOOK_PASS],
   },
   app,
+);
+
+const cmsApp = createCmsApp({
+  getSecret: (name) => {
+    const param = { CMS_ADMIN_PASSWORD }[name];
+    if (!param) return '';
+    try {
+      return param.value() ?? '';
+    } catch {
+      return '';
+    }
+  },
+});
+
+export const cms = onRequest(
+  {
+    region: 'us-central1',
+    memory: '256MiB',
+    timeoutSeconds: 30,
+    maxInstances: 10,
+    invoker: 'public',
+    secrets: [CMS_ADMIN_PASSWORD],
+  },
+  cmsApp,
 );

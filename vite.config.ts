@@ -36,6 +36,11 @@ export default defineConfig(() => {
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api\/payments/, ''),
         },
+        '/api/cms': {
+          target: `http://127.0.0.1:5001/${PROJECT_ID}/us-central1/cms`,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api\/cms/, ''),
+        },
       },
     },
   };

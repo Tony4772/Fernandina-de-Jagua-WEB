@@ -312,6 +312,42 @@ export function saveStoredSiteData(data: SiteData): void {
   }
 }
 
+export async function loadRemoteSiteData(): Promise<SiteData | null> {
+  try {
+    const response = await fetch('/api/cms/site', { headers: { Accept: 'application/json' } });
+    if (response.status === 404) return null;
+    const result = await response.json();
+    if (!response.ok || !result.success || !result.data?.brand || !Array.isArray(result.data.products)) {
+      throw new Error(result.error || 'No se pudo cargar el catálogo compartido.');
+    }
+    const parsed = result.data as SiteData;
+    return {
+      ...DEFAULT_SITE_DATA,
+      ...parsed,
+      brand: { ...DEFAULT_SITE_DATA.brand, ...(parsed.brand || {}) },
+      home: { ...DEFAULT_SITE_DATA.home, ...(parsed.home || {}) },
+      catalog: { ...DEFAULT_SITE_DATA.catalog, ...(parsed.catalog || {}) },
+      visit: { ...DEFAULT_SITE_DATA.visit, ...(parsed.visit || {}) },
+      products: parsed.products.length > 0 ? parsed.products : DEFAULT_SITE_DATA.products,
+    };
+  } catch (error) {
+    console.warn('Catálogo compartido no disponible; se mantiene el catálogo local.', error);
+    return null;
+  }
+}
+
+export async function saveRemoteSiteData(data: SiteData, password: string): Promise<void> {
+  const response = await fetch('/api/cms/site', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'x-cms-password': password },
+    body: JSON.stringify({ data }),
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok || !result.success) {
+    throw new Error(result.error || 'No se pudo guardar el catálogo compartido.');
+  }
+}
+
 export function resetStoredSiteData(): SiteData {
   try {
     localStorage.removeItem(STORAGE_KEY);
@@ -321,9 +357,18 @@ export function resetStoredSiteData(): SiteData {
   return DEFAULT_SITE_DATA;
 }
 
-export function verifyAdminPassword(input: string): boolean {
-  const current = localStorage.getItem(PASS_KEY) || DEFAULT_PASS;
-  return input.trim() === current.trim();
+export async function verifyAdminPassword(input: string): Promise<boolean> {
+  try {
+    const response = await fetch('/api/cms/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: input }),
+    });
+    return response.ok;
+  } catch {
+    const current = localStorage.getItem(PASS_KEY) || DEFAULT_PASS;
+    return input.trim() === current.trim();
+  }
 }
 
 export function updateAdminPassword(newPass: string): void {

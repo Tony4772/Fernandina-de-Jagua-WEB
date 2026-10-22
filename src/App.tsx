@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { PageRoute, Product, SiteData } from './types';
-import { loadStoredSiteData, saveStoredSiteData, resetStoredSiteData } from './data/cmsStore';
+import {
+  loadStoredSiteData,
+  loadRemoteSiteData,
+  saveRemoteSiteData,
+  saveStoredSiteData,
+  resetStoredSiteData,
+} from './data/cmsStore';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { HomeView } from './views/HomeView';
@@ -37,14 +43,32 @@ export default function App() {
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [cartToast, setCartToast] = useState<string | null>(null);
-  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
-    return sessionStorage.getItem('fernandina_admin_session') === 'active';
-  });
+  // La sesión anterior no conserva la contraseña necesaria para sincronizar Firestore.
+  // Se solicita un nuevo login después de activar el CMS remoto.
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [cmsPassword, setCmsPassword] = useState('');
+
+  useEffect(() => {
+    let cancelled = false;
+    loadRemoteSiteData().then((remoteData) => {
+      if (cancelled || !remoteData) return;
+      setSiteData(remoteData);
+      if (remoteData.products.length > 0) setSelectedProduct(remoteData.products[0]);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Save changes to localStorage whenever siteData updates
   const handleUpdateSiteData = (newData: SiteData) => {
     setSiteData(newData);
     saveStoredSiteData(newData);
+    if (cmsPassword) {
+      saveRemoteSiteData(newData, cmsPassword).catch((error) => {
+        console.error('No se pudo sincronizar el CMS con Firestore:', error);
+      });
+    }
     // Keep selected product in sync if updated
     if (selectedProduct) {
       const refreshed = newData.products.find((p) => p.id === selectedProduct.id);
@@ -120,16 +144,24 @@ export default function App() {
     }
   };
 
-  const handleLoginSuccess = () => {
+  const handleLoginSuccess = async (password: string) => {
+    setCmsPassword(password);
     setIsAdminLoggedIn(true);
     sessionStorage.setItem('fernandina_admin_session', 'active');
     setAdminLoginModalOpen(false);
     setCurrentRoute('admin');
+    try {
+      // Migra al servidor cualquier producto que solo existía en el escritorio.
+      await saveRemoteSiteData(siteData, password);
+    } catch (error) {
+      console.error('No se pudo inicializar el catálogo compartido:', error);
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleLogout = () => {
     setIsAdminLoggedIn(false);
+    setCmsPassword('');
     sessionStorage.removeItem('fernandina_admin_session');
     setCurrentRoute('inicio');
     window.scrollTo({ top: 0, behavior: 'smooth' });

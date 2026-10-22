@@ -8,3 +8,4 @@ import { defineSecret } from 'firebase-functions/params';
 export const CULQI_SECRET_KEY = defineSecret('CULQI_SECRET_KEY');
 export const CULQI_WEBHOOK_USER = defineSecret('CULQI_WEBHOOK_USER');
 export const CULQI_WEBHOOK_PASS = defineSecret('CULQI_WEBHOOK_PASS');
+export const CMS_ADMIN_PASSWORD = defineSecret('CMS_ADMIN_PASSWORD');

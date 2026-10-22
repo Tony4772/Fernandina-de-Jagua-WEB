@@ -4,7 +4,7 @@ import { verifyAdminPassword } from '../data/cmsStore';
 interface AdminLoginModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (password: string) => void | Promise<void>;
 }
 
 export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
@@ -17,12 +17,12 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (verifyAdminPassword(password)) {
+    if (await verifyAdminPassword(password)) {
       setError('');
+      await onSuccess(password);
       setPassword('');
-      onSuccess();
     } else {
       setError('Contraseña incorrecta. Por favor intente nuevamente.');
     }
