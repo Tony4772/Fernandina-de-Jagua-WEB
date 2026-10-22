@@ -1,0 +1,1 @@
+Versión inicial: catálogo, favoritos, caja, bolsa, Yape o tarjeta, y boleta o factura.

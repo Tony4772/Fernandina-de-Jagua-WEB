@@ -1,0 +1,6 @@
+{
+  "name": "Fernandina de Jagua Chocolates",
+  "description": "Chocolates y bombones en Comandante Guillermo Moore 296, San Miguel, Lima. Selección de cacao peruano y cofres personalizados.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

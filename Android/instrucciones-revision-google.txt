@@ -1,0 +1,20 @@
+Instrucciones para revisar Fernandina de Jagua Chocolates
+
+La app está en español. No hace falta un permiso especial ni un código.
+
+Cuenta de prueba
+Correo: demo@ebyzom.com
+Contraseña: demo123
+Entra con correo y contraseña. No uses «Continuar con Google» para esta revisión.
+
+Pasos
+1. Abre la app. Si aparece una pantalla negra con EBYZOM, tócala para saltarla. Luego aparece el logo y la app entra sola.
+2. Abajo, pulsa Perfil.
+3. El formulario abre en «Crea tu cuenta». Pulsa «Ya tengo cuenta». Escribe el correo y la contraseña de arriba y pulsa «Entrar».
+4. Vuelve a Inicio. Puedes abrir un producto, marcarlo como favorito y pulsar para agregarlo a la bolsa.
+5. En Arma tu Caja puedes armar una caja y añadirla a la bolsa.
+6. En Bolsa se ve el pedido, la entrega y el pago con Yape o tarjeta.
+
+No completes el pago. «Pagar ahora» cobra dinero real con Culqi. Para la revisión basta con ver el formulario. No hace falta boleta ni factura, porque solo se emiten después de un cobro.
+
+La cuenta de prueba no es la de la tienda. No verá el botón «Mi tienda».

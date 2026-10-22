@@ -1,0 +1,44 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /products/{productId}/{fileName} {
+      allow read: if true;
+      allow create, update: if request.auth != null
+        && request.auth.token.email == 'jos.antonio4772@gmail.com'
+        && request.auth.token.firebase.sign_in_provider != 'anonymous'
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+      allow delete: if request.auth != null
+        && request.auth.token.email == 'jos.antonio4772@gmail.com'
+        && request.auth.token.firebase.sign_in_provider != 'anonymous';
+    }
+
+    match /categories/{categoryId}/{fileName} {
+      allow read: if true;
+      allow create, update: if request.auth != null
+        && request.auth.token.email == 'jos.antonio4772@gmail.com'
+        && request.auth.token.firebase.sign_in_provider != 'anonymous'
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+      allow delete: if request.auth != null
+        && request.auth.token.email == 'jos.antonio4772@gmail.com'
+        && request.auth.token.firebase.sign_in_provider != 'anonymous';
+    }
+
+    match /storefront/{fileName} {
+      allow read: if true;
+      allow create, update: if request.auth != null
+        && request.auth.token.email == 'jos.antonio4772@gmail.com'
+        && request.auth.token.firebase.sign_in_provider != 'anonymous'
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+      allow delete: if request.auth != null
+        && request.auth.token.email == 'jos.antonio4772@gmail.com'
+        && request.auth.token.firebase.sign_in_provider != 'anonymous';
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
