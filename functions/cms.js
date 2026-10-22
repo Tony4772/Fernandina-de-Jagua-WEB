@@ -1,8 +1,8 @@
 import express from 'express';
 import { getFirestore } from 'firebase-admin/firestore';
 
-const app = express();
-app.use(express.json({ limit: '3mb' }));
+const router = express.Router();
+router.use(express.json({ limit: '3mb' }));
 
 const siteRef = () => getFirestore().collection('cms').doc('site');
 
@@ -21,9 +21,7 @@ function isAuthorized(req, getSecret) {
 }
 
 export function createCmsApp({ getSecret }) {
-  const cmsApp = app;
-
-  cmsApp.get('/site', async (_req, res) => {
+  router.get('/site', async (_req, res) => {
     try {
       const snapshot = await siteRef().get();
       if (!snapshot.exists) {
@@ -36,7 +34,7 @@ export function createCmsApp({ getSecret }) {
     }
   });
 
-  cmsApp.post('/auth', (req, res) => {
+  router.post('/auth', (req, res) => {
     const password = String(req.body?.password || '').trim();
     const configured = getAdminPassword(getSecret);
     if (!configured || password !== configured) {
@@ -45,7 +43,7 @@ export function createCmsApp({ getSecret }) {
     return res.status(200).json({ success: true });
   });
 
-  cmsApp.put('/site', async (req, res) => {
+  router.put('/site', async (req, res) => {
     if (!isAuthorized(req, getSecret)) {
       return res.status(401).json({ success: false, error: 'No autorizado para modificar el CMS.' });
     }
@@ -64,5 +62,11 @@ export function createCmsApp({ getSecret }) {
     }
   });
 
-  return cmsApp;
+  const app = express();
+  app.use(express.json({ limit: '3mb' }));
+  // Firebase Hosting conserva el prefijo del rewrite al invocar la función.
+  app.use('/api/cms', router);
+  // La ruta directa de la Cloud Function también queda disponible para diagnóstico.
+  app.use('/', router);
+  return app;
 }
