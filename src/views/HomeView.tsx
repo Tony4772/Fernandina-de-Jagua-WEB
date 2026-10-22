@@ -1,19 +1,18 @@
 import React from 'react';
 import { PageRoute, Product, SiteData } from '../types';
 import { googleMapsEmbedUrl } from '../lib/maps';
+import { GooglePlayBadge } from '../components/GooglePlayBadge';
 
 interface HomeViewProps {
   siteData: SiteData;
   onRouteChange: (route: PageRoute) => void;
   onSelectProduct: (product: Product) => void;
-  onOpenAndroid: () => void;
 }
 
 export const HomeView: React.FC<HomeViewProps> = ({
   siteData,
   onRouteChange,
   onSelectProduct,
-  onOpenAndroid,
 }) => {
   const { brand, home, products } = siteData;
 
@@ -68,15 +67,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
             </button>
 
-            <button
-              onClick={onOpenAndroid}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs px-space-lg py-3 rounded-lg bg-surface-container-highest/20 backdrop-blur-sm text-surface-bright hover:bg-surface-container-highest/35 transition-all duration-300 font-label-md text-label-md uppercase tracking-wider cursor-pointer"
-            >
-              <span className="material-symbols-outlined text-[18px] text-on-tertiary-container">
-                android
-              </span>
-              <span>Descargar en Google Play</span>
-            </button>
+            <GooglePlayBadge className="w-full sm:w-auto" />
           </div>
 
           {/* Subtle Origin Bar */}
@@ -192,15 +183,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 </p>
               </div>
               <div className="pt-space-md">
-                <button
-                  onClick={onOpenAndroid}
-                  className="inline-flex items-center gap-space-xs px-space-md py-3 rounded-lg bg-primary-container text-surface-bright hover:bg-on-primary-fixed transition-colors font-label-md text-label-md uppercase tracking-wider cursor-pointer shadow-sm"
-                >
-                  <span className="material-symbols-outlined text-[18px] text-secondary-fixed">
-                    download
-                  </span>
-                  <span>Descargar en Google Play</span>
-                </button>
+                <GooglePlayBadge />
               </div>
             </div>
 

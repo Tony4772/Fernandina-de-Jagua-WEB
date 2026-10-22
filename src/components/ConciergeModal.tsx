@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import { BrandConfig } from '../types';
+import { GooglePlayBadge } from './GooglePlayBadge';
 
 interface ConciergeModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onOpenAndroid: () => void;
   brand: BrandConfig;
 }
 
 export const ConciergeModal: React.FC<ConciergeModalProps> = ({
   isOpen,
   onClose,
-  onOpenAndroid,
   brand,
 }) => {
   const [inquiryType, setInquiryType] = useState('pedido');
@@ -140,16 +139,11 @@ export const ConciergeModal: React.FC<ConciergeModalProps> = ({
                 </span>
                 <span>¿Tienes Android?</span>
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  onClose();
-                  onOpenAndroid();
-                }}
-                className="text-secondary font-semibold hover:underline cursor-pointer uppercase font-label-sm tracking-wider"
-              >
-                Google Play
-              </button>
+              <GooglePlayBadge
+                className="shrink-0"
+                imageClassName="h-8 w-auto"
+                onClick={onClose}
+              />
             </div>
 
             <div className="pt-2 flex items-center justify-end gap-space-xs">

@@ -24,7 +24,6 @@ import {
   saveCart,
   updateCartQuantity,
 } from './lib/cart';
-import { ANDROID_APP_URL } from './lib/appLinks';
 
 export default function App() {
   const [siteData, setSiteData] = useState<SiteData>(() => loadStoredSiteData());
@@ -41,10 +40,6 @@ export default function App() {
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
     return sessionStorage.getItem('fernandina_admin_session') === 'active';
   });
-
-  const handleOpenAndroid = () => {
-    window.open(ANDROID_APP_URL, '_blank', 'noopener,noreferrer');
-  };
 
   // Save changes to localStorage whenever siteData updates
   const handleUpdateSiteData = (newData: SiteData) => {
@@ -173,7 +168,6 @@ export default function App() {
             siteData={siteData}
             onRouteChange={handleRouteChange}
             onSelectProduct={handleSelectProduct}
-            onOpenAndroid={handleOpenAndroid}
           />
         )}
 
@@ -182,7 +176,6 @@ export default function App() {
             siteData={siteData}
             onSelectProduct={handleSelectProduct}
             onOpenProductModal={handleOpenProductModal}
-            onOpenAndroid={handleOpenAndroid}
             onAddToCart={(product) => handleAddToCart(product)}
             onOpenCart={() => setCartOpen(true)}
           />
@@ -194,7 +187,6 @@ export default function App() {
             siteData={siteData}
             onRouteChange={handleRouteChange}
             onSelectProduct={handleSelectProduct}
-            onOpenAndroid={handleOpenAndroid}
             onAddToCart={(product, quantity) => handleAddToCart(product, quantity)}
           />
         )}
@@ -202,7 +194,6 @@ export default function App() {
         {currentRoute === 'visitanos' && (
           <VisitUsView
             siteData={siteData}
-            onOpenAndroid={handleOpenAndroid}
           />
         )}
       </main>
@@ -256,7 +247,6 @@ export default function App() {
       <ConciergeModal
         isOpen={conciergeModalOpen}
         onClose={() => setConciergeModalOpen(false)}
-        onOpenAndroid={handleOpenAndroid}
         brand={siteData.brand}
       />
 

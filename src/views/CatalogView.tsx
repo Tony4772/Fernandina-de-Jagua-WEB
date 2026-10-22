@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Product, SiteData } from '../types';
+import { GooglePlayBadge } from '../components/GooglePlayBadge';
 
 interface CatalogViewProps {
   siteData: SiteData;
   onSelectProduct: (product: Product) => void;
   onOpenProductModal: (product: Product) => void;
-  onOpenAndroid: () => void;
   onAddToCart: (product: Product) => void;
   onOpenCart: () => void;
 }
@@ -14,7 +14,6 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
   siteData,
   onSelectProduct,
   onOpenProductModal,
-  onOpenAndroid,
   onAddToCart,
   onOpenCart,
 }) => {
@@ -204,15 +203,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                 <span className="material-symbols-outlined text-[18px]">chat</span>
                 <span>WhatsApp: {brand.whatsappNumber}</span>
               </a>
-              <button
-                onClick={onOpenAndroid}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs px-space-lg py-space-sm rounded-lg bg-surface-container-high text-on-primary-fixed font-label-md text-label-md uppercase tracking-wider transition-colors shadow-sm text-center hover:bg-surface-variant cursor-pointer"
-              >
-                <span className="material-symbols-outlined text-[18px] text-secondary">
-                  android
-                </span>
-                <span>Disponible en Google Play</span>
-              </button>
+              <GooglePlayBadge className="w-full sm:w-auto" />
             </div>
           </div>
         </div>

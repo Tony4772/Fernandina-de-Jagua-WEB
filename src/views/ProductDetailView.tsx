@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { PageRoute, Product, SiteData } from '../types';
 import { formatSoles, MAX_ITEM_QUANTITY } from '../lib/cart';
+import { GooglePlayBadge } from '../components/GooglePlayBadge';
 
 interface ProductDetailViewProps {
   product: Product;
   siteData: SiteData;
   onRouteChange: (route: PageRoute) => void;
   onSelectProduct: (product: Product) => void;
-  onOpenAndroid: () => void;
   onAddToCart: (product: Product, quantity: number) => void;
 }
 
@@ -16,7 +16,6 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   siteData,
   onRouteChange,
   onSelectProduct,
-  onOpenAndroid,
   onAddToCart,
 }) => {
   const { brand, products } = siteData;
@@ -209,13 +208,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                   <span>Pedir por WhatsApp</span>
                 </a>
 
-                <button
-                  onClick={onOpenAndroid}
-                  className="w-full flex items-center justify-center gap-space-sm py-space-sm px-space-md rounded-lg bg-surface-container-high text-on-primary-fixed hover:bg-surface-variant transition-all duration-200 font-label-md text-label-md uppercase tracking-widest text-center shadow-sm cursor-pointer"
-                >
-                  <span className="material-symbols-outlined text-[18px]">smartphone</span>
-                  <span>Ver en Google Play</span>
-                </button>
+                <GooglePlayBadge className="w-full" />
               </div>
 
               {/* Transparency Footnote */}

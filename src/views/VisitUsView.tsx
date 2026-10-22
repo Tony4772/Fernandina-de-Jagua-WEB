@@ -1,13 +1,13 @@
 import React from 'react';
 import { SiteData } from '../types';
 import { googleMapsEmbedUrl, googleMapsSearchUrl } from '../lib/maps';
+import { GooglePlayBadge } from '../components/GooglePlayBadge';
 
 interface VisitUsViewProps {
   siteData: SiteData;
-  onOpenAndroid: () => void;
 }
 
-export const VisitUsView: React.FC<VisitUsViewProps> = ({ siteData, onOpenAndroid }) => {
+export const VisitUsView: React.FC<VisitUsViewProps> = ({ siteData }) => {
   const { brand, visit } = siteData;
 
   return (
@@ -184,13 +184,7 @@ export const VisitUsView: React.FC<VisitUsViewProps> = ({ siteData, onOpenAndroi
                   </span>
                 </div>
               </div>
-              <button
-                onClick={onOpenAndroid}
-                className="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-space-xs px-space-md py-space-sm rounded-lg bg-on-primary-fixed text-surface-bright hover:bg-secondary hover:text-on-secondary transition-all duration-200 font-label-md text-label-md uppercase tracking-wider shadow-sm cursor-pointer"
-              >
-                <span className="material-symbols-outlined text-[16px]">download</span>
-                <span>Descargar en Google Play</span>
-              </button>
+              <GooglePlayBadge className="w-full sm:w-auto shrink-0" />
             </div>
           </div>
 
