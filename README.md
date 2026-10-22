@@ -131,7 +131,7 @@ automáticamente cuando el DNS propaga. No requiere cambios en el código.
 | `firebase.json` | Hosting: `public: dist`, `cleanUrls`, rewrite SPA `** → /index.html`, cabeceras de caché y seguridad |
 | `vite.config.ts` | build de Vite y proxy de `/api/payments` al emulador |
 | `functions/` | backend de pagos (Cloud Functions, Node 22) |
-| `functions/catalog.json` | catálogo de precios que usa el servidor para cobrar (generado) |
+| `functions/catalog.json` | catálogo de respaldo de arranque para el servidor de pagos |
 | `firestore.rules` | Firestore cerrado al cliente: solo accede el Admin SDK |
 | `dist/` | salida compilada (ignorada por Git) |
 
@@ -154,7 +154,7 @@ El sitio tiene carrito y pago en línea real con **Yape nativo**:
   → cargo en el backend. Yape usa token `ype_…` y código de aprobación de 6 dígitos (2 min vigencia, máx. S/ 2,000).
 - **Yape UX** (`src/lib/culqi.ts`): `paymentMethods: { tarjeta: true, yape: true }`, orden de pestañas según selección,
   instrucciones paso a paso y validación de límite.
-- **Backend** (`functions/`): crea el pedido, recalcula el monto con `functions/catalog.json`
+- **Backend** (`functions/`): crea el pedido, recalcula el monto con el catálogo actual de Firestore
   (nunca confía en el precio del navegador), valida límite Yape, reserva el pedido en Firestore y crea el cargo con la
   llave secreta en Secret Manager (`source_id = tkn_…` o `ype_…`).
 - **Webhook** (`POST /api/payments/webhooks/culqi`): re-consulta el cargo en Culqi y actualiza el
@@ -179,9 +179,9 @@ como fallback, pero ya no es la fuente principal:
 3. Inicia sesión en el CMS desde el escritorio; el catálogo local se migrará a Firestore en `cms/site`.
 4. Los siguientes cambios se sincronizan automáticamente para todos los dispositivos.
 
-> Importante para pagos: si cambias precios desde el panel admin, el backend seguirá cobrando con
-> `functions/catalog.json`. Actualiza `src/data/products.ts` y ejecuta `npm run catalog:sync`
-> (el build ya lo hace automáticamente) o migra el CMS a Firestore.
+> Importante para pagos: los productos y precios publicados desde el CMS se validan en el backend
+> directamente contra Firestore. Al agregar, eliminar o cambiar productos, el siguiente pedido usa
+> el catálogo actualizado sin depender de una cantidad fija ni de un nuevo build.
 
 ## Notas
 

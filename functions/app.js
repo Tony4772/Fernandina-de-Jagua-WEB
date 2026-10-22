@@ -19,7 +19,7 @@ const MAX_QTY_PER_ITEM = 20;
 const ORDER_TTL_MS = 30 * 60 * 1000; // 30 minutos para pagar
 
 const catalog = JSON.parse(readFileSync(new URL('./catalog.json', import.meta.url), 'utf8'));
-const PRODUCTS = new Map(catalog.products.map((product) => [product.id, product]));
+export const PRODUCTS = new Map(catalog.products.map((product) => [product.id, product]));
 
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS ||
   [
@@ -174,7 +174,7 @@ export function getPaymentMethod(token) {
   return 'card';
 }
 
-export function createApp({ db, getSecret }) {
+export function createApp({ db, getSecret, getProducts = async () => PRODUCTS }) {
   const secret = (name) => {
     try {
       return getSecret(name) ?? '';
@@ -229,15 +229,20 @@ export function createApp({ db, getSecret }) {
 
   const router = express.Router();
 
-  router.get('/health', (req, res) => {
-    const secretKey = secret('CULQI_SECRET_KEY');
-    res.json({
-      ok: true,
-      service: 'fernandina-payments',
-      currency: CURRENCY,
-      mode: secretKey ? keyMode(secretKey) : 'sin_configurar',
-      products: PRODUCTS.size,
-    });
+  router.get('/health', async (req, res, next) => {
+    try {
+      const secretKey = secret('CULQI_SECRET_KEY');
+      const products = await getProducts();
+      res.json({
+        ok: true,
+        service: 'fernandina-payments',
+        currency: CURRENCY,
+        mode: secretKey ? keyMode(secretKey) : 'sin_configurar',
+        products: products.size,
+      });
+    } catch (error) {
+      next(error);
+    }
   });
 
   /**
@@ -247,7 +252,8 @@ export function createApp({ db, getSecret }) {
   router.post('/orders', rateLimit({ max: 15, windowMs: 10 * 60 * 1000 }), async (req, res, next) => {
     try {
       const customer = validateCustomer(req.body?.customer);
-      const { items, amount } = buildOrderItems(req.body?.items);
+      const products = await getProducts();
+      const { items, amount } = buildOrderItems(req.body?.items, products);
 
       const reference = db.collection('orders').doc();
       const orderNumber = newOrderNumber();

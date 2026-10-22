@@ -331,7 +331,8 @@ export async function loadRemoteSiteData(): Promise<SiteData | null> {
       home: { ...DEFAULT_SITE_DATA.home, ...(parsed.home || {}) },
       catalog: { ...DEFAULT_SITE_DATA.catalog, ...(parsed.catalog || {}) },
       visit: { ...DEFAULT_SITE_DATA.visit, ...(parsed.visit || {}) },
-      products: parsed.products.length > 0 ? parsed.products : DEFAULT_SITE_DATA.products,
+      // Un arreglo vacío es una decisión válida del CMS: no reintroducir ejemplos.
+      products: parsed.products,
     };
     saveStoredSiteData(normalized);
     return normalized;

@@ -5,7 +5,7 @@
  * Cubre tarjeta (tkn_…) y Yape (ype_…) con Culqi Checkout Custom.
  */
 import assert from 'node:assert/strict';
-import { createApp } from '../app.js';
+import { createApp, PRODUCTS } from '../app.js';
 
 // Guardamos el fetch real antes de simular el de Culqi.
 const realFetch = globalThis.fetch;
@@ -69,7 +69,12 @@ globalThis.fetch = async (url, init) => {
 };
 
 /* ------------------------------- Servidor -------------------------------- */
-const app = createApp({ db: fakeDb, getSecret: (name) => secrets[name] ?? '' });
+const activeProducts = new Map(PRODUCTS);
+const app = createApp({
+  db: fakeDb,
+  getSecret: (name) => secrets[name] ?? '',
+  getProducts: async () => activeProducts,
+});
 const server = app.listen(0);
 const { port } = server.address();
 const base = `http://127.0.0.1:${port}/api/payments`;
@@ -113,6 +118,31 @@ try {
     assert.equal(status, 200);
     assert.equal(body.mode, 'test');
     assert.equal(body.products, 8);
+  });
+
+  await check('acepta un producto nuevo publicado en el catálogo dinámico', async () => {
+    activeProducts.set('producto-nuevo', {
+      id: 'producto-nuevo',
+      name: 'Producto nuevo',
+      netWeight: '100 gramos',
+      priceValue: 7.5,
+      amountInCents: 750,
+    });
+    const { status, body } = await post('/orders', {
+      items: [{ id: 'producto-nuevo', quantity: 2, priceValue: 0.01 }],
+      customer,
+    });
+    assert.equal(status, 201);
+    assert.equal(body.amount, 1500);
+    activeProducts.delete('producto-nuevo');
+  });
+
+  await check('rechaza un producto eliminado del catálogo dinámico', async () => {
+    const { status } = await post('/orders', {
+      items: [{ id: 'producto-nuevo', quantity: 1 }],
+      customer,
+    });
+    assert.equal(status, 400);
   });
 
   await check('rechaza un carrito vacío', async () => {

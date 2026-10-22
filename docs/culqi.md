@@ -8,7 +8,7 @@ Navegador                     Firebase Hosting            Cloud Function `paymen
 carrito (localStorage)
   │
   ├─ POST /api/payments/orders ──────────────▶ crea pedido `pending`
-  │                                            recalcula monto (catalog.json)
+  │                                            recalcula monto (catálogo CMS en Firestore)
   │◀───────────── {orderId, amount} ───────────┤
   │
   ├─ Culqi Checkout (tokeniza tarjeta/Yape) ──────────────────────────────────────────────▶ token
@@ -25,9 +25,8 @@ Puntos clave del diseño:
 - **La llave secreta (`sk_live_…`) vive solo en Secret Manager.** El navegador solo usa la llave
   pública (`pk_live_…`) para tokenizar. Los datos de la tarjeta nunca pasan por la web ni por el
   backend.
-- **El precio lo manda el servidor.** `functions/catalog.json` se genera desde
-  `src/data/products.ts` (`npm run catalog:sync`) y el backend ignora cualquier precio que envíe
-  el navegador.
+- **El precio lo manda el servidor.** El backend lee el catálogo actual del CMS en Firestore,
+  convierte el `priceValue` publicado a céntimos e ignora cualquier precio que envíe el navegador.
 - **Un pedido se cobra una sola vez.** Antes de llamar a Culqi se reserva el pedido en Firestore
   (`pending` → `processing`) dentro de una transacción.
 - **El webhook no se cree a ciegas.** Culqi no firma los webhooks: se valida Basic Auth (si está
@@ -199,9 +198,9 @@ Firestore si necesitas reflejarlo.
 - **Sin control de stock ni cupones.** Todos los productos del catálogo se pueden comprar.
 - **Delivery no cobrado en línea.** El envío se coordina por WhatsApp tras el pago (así lo indica el
   checkout y el mensaje de éxito).
-- **El CMS sigue en `localStorage`.** Si cambias precios desde el panel admin, el backend seguirá
-  usando `functions/catalog.json`: actualiza `src/data/products.ts` y ejecuta
-  `npm run catalog:sync` (o migra el CMS a Firestore en una siguiente fase).
+- **El catálogo de cobro se lee desde Firestore.** Si agregas, eliminas o cambias un producto en
+  el CMS, el siguiente pedido usa esa versión del catálogo. Si el documento CMS aún no existe,
+  el backend usa el catálogo incluido como respaldo de arranque.
 - **Zona horaria de los números de pedido**: se generan con fecha UTC (`FJ-YYYYMMDD-XXXXXX`).
 - **Yape solo PEN y S/ 2,000**: restricción de Culqi/Yape, validada en frontend y backend.
 
