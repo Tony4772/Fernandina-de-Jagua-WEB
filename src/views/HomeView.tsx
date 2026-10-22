@@ -215,13 +215,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </div>
 
             {/* Alternativa: WhatsApp */}
-            <div className="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between border border-surface-container-high/50">
+            <div className="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between border border-[#25D366]/30">
               <div>
-                <div className="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary mb-space-md">
-                  <span className="material-symbols-outlined text-[28px]">chat</span>
+                <div className="w-12 h-12 rounded-lg bg-[#25D366]/10 flex items-center justify-center text-[#128C7E] mb-space-md">
+                  <span className="material-symbols-outlined text-[28px]" aria-hidden="true">chat</span>
                 </div>
-                <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-tertiary-container">
-                  Alternativa
+                <span className="font-label-sm text-label-sm uppercase tracking-wider text-[#128C7E]">
+                  Alternativa · WhatsApp
                 </span>
                 <h3 className="font-headline-sm text-headline-sm text-on-primary-fixed mt-1 mb-space-xs">
                   {home.option2Title}
@@ -230,19 +230,16 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   {home.option2Desc}
                 </p>
               </div>
-              <div className="pt-space-md flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs">
+              <div className="pt-space-md">
                 <a
-                  className="inline-flex items-center gap-space-xs px-space-md py-3 rounded-lg bg-secondary text-on-secondary hover:bg-on-tertiary-container transition-colors font-label-md text-label-md uppercase tracking-wider cursor-pointer shadow-sm"
+                  className="inline-flex items-center gap-space-xs px-space-md py-3 rounded-lg bg-[#25D366] text-[#073B25] hover:bg-[#20bd5a] transition-colors font-label-md text-label-md uppercase tracking-wider cursor-pointer shadow-sm"
                   href={brand.whatsappUrl}
                   rel="noopener noreferrer"
                   target="_blank"
                 >
-                  <span className="material-symbols-outlined text-[18px]">send</span>
-                  <span>Escribir al {brand.whatsappNumber}</span>
+                  <span className="material-symbols-outlined text-[18px]" aria-hidden="true">chat</span>
+                  <span>Escribir por WhatsApp</span>
                 </a>
-                <span className="font-body-sm text-body-sm text-on-surface-variant">
-                  Lunes a Sábado
-                </span>
               </div>
             </div>
           </div>

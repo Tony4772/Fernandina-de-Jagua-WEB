@@ -103,6 +103,27 @@ export const Footer: React.FC<FooterProps> = ({
           </div>
         </div>
 
+        <div className="border-t border-[#38221b] py-space-md flex flex-col lg:flex-row lg:items-center lg:justify-between gap-space-md">
+          <div className="flex items-start gap-space-xs">
+            <span className="material-symbols-outlined text-secondary-fixed text-[22px]" aria-hidden="true">
+              lock
+            </span>
+            <div>
+              <p className="font-label-md text-label-md text-surface-bright">Pago seguro procesado por Culqi</p>
+              <p className="font-body-sm text-body-sm text-primary-fixed-dim mt-1">
+                Ingresa los datos de pago en el checkout de Culqi. Aceptamos tarjetas de crédito y débito y Yape.
+              </p>
+            </div>
+          </div>
+          <div aria-label="Medios de pago aceptados" className="flex flex-wrap gap-2">
+            <span className="rounded-md bg-white px-2.5 py-1.5 font-label-sm text-label-sm font-bold tracking-wide text-[#1a1f71]">VISA</span>
+            <span className="rounded-md bg-white px-2.5 py-1.5 font-label-sm text-label-sm font-bold text-[#222222]">Mastercard</span>
+            <span className="rounded-md bg-white px-2.5 py-1.5 font-label-sm text-label-sm font-bold text-[#2e77bc]">AMEX</span>
+            <span className="rounded-md bg-white px-2.5 py-1.5 font-label-sm text-label-sm font-bold text-[#0079be]">Diners Club</span>
+            <span className="rounded-md bg-white px-2.5 py-1.5 font-label-sm text-label-sm font-bold text-[#6500c8]">Yape</span>
+          </div>
+        </div>
+
         {/* Bottom copyright line */}
         <div className="pt-space-md border-t border-[#38221b] flex flex-col sm:flex-row items-center justify-between gap-space-sm font-label-sm text-label-sm text-on-primary-container">
           <p>© {brand.companyName} {brand.name}. Todos los derechos reservados.</p>
