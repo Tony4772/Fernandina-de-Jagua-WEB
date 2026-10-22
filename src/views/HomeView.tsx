@@ -165,15 +165,42 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter-desktop">
-            {/* Opcion 1: App Android */}
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter-desktop">
+            {/* Opción principal: carrito web y pago Culqi */}
+            <div className="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between border border-secondary/40">
+              <div>
+                <div className="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary mb-space-md">
+                  <span className="material-symbols-outlined text-[28px]">lock</span>
+                </div>
+                <span className="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Opción principal</span>
+                <h3 className="font-headline-sm text-headline-sm text-on-primary-fixed mt-1 mb-space-xs">Compra directamente desde la web</h3>
+                <p className="font-body-md text-body-md text-on-surface-variant mb-space-md">
+                  Añade tus chocolates al carrito, paga con tarjeta o Yape en el checkout seguro de Culqi y luego coordinamos el envío o recojo.
+                </p>
+              </div>
+              <div className="pt-space-md">
+                <button
+                  onClick={() => {
+                    onRouteChange('productos');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="inline-flex items-center gap-space-xs px-space-md py-3 rounded-lg bg-secondary text-on-secondary hover:bg-on-tertiary-container transition-colors font-label-md text-label-md uppercase tracking-wider cursor-pointer shadow-sm"
+                  type="button"
+                >
+                  <span className="material-symbols-outlined text-[18px]">shopping_bag</span>
+                  <span>Ver productos y comprar</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Alternativa: App Android */}
             <div className="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between border border-surface-container-high/50">
               <div>
                 <div className="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary mb-space-md">
                   <span className="material-symbols-outlined text-[28px]">smartphone</span>
                 </div>
                 <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-tertiary-container">
-                  Opción 1
+                  Alternativa
                 </span>
                 <h3 className="font-headline-sm text-headline-sm text-on-primary-fixed mt-1 mb-space-xs">
                   {home.option1Title}
@@ -187,14 +214,14 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </div>
             </div>
 
-            {/* Opcion 2: WhatsApp */}
+            {/* Alternativa: WhatsApp */}
             <div className="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between border border-surface-container-high/50">
               <div>
                 <div className="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary mb-space-md">
                   <span className="material-symbols-outlined text-[28px]">chat</span>
                 </div>
                 <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-tertiary-container">
-                  Opción 2
+                  Alternativa
                 </span>
                 <h3 className="font-headline-sm text-headline-sm text-on-primary-fixed mt-1 mb-space-xs">
                   {home.option2Title}

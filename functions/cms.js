@@ -20,6 +20,24 @@ function isAuthorized(req, getSecret) {
   return Boolean(configured && provided && configured === provided);
 }
 
+const LEGACY_ORDER_COPY = {
+  howToOrderOverline: ['Modalidad Directa', 'Compra en línea'],
+  howToOrderTitle: ['Cómo Realizar tu Pedido', 'Elige, paga y coordina'],
+  howToOrderDesc: [
+    'Atención directa y personalizada para tus pedidos y reservas. Sin intermediarios ni procesos engorrosos.',
+    'Compra directamente desde el catálogo de esta web, paga con tarjeta o Yape mediante Culqi y luego coordinamos contigo el envío o recojo.',
+  ],
+};
+
+function normalizeLegacyOrderCopy(data) {
+  if (!data || typeof data !== 'object') return data;
+  const home = { ...(data.home || {}) };
+  for (const [field, [oldText, newText]] of Object.entries(LEGACY_ORDER_COPY)) {
+    if (home[field] === oldText) home[field] = newText;
+  }
+  return { ...data, home };
+}
+
 export function createCmsApp({ getSecret }) {
   router.get('/site', async (_req, res) => {
     res.set('Cache-Control', 'no-store, max-age=0');
@@ -28,7 +46,7 @@ export function createCmsApp({ getSecret }) {
       if (!snapshot.exists) {
         return res.status(404).json({ success: false, error: 'El CMS todavía no tiene datos compartidos.' });
       }
-      return res.status(200).json({ success: true, data: snapshot.data() });
+      return res.status(200).json({ success: true, data: normalizeLegacyOrderCopy(snapshot.data()) });
     } catch (error) {
       console.error('Error leyendo CMS:', error);
       return res.status(503).json({ success: false, error: 'No se pudo cargar el catálogo compartido.' });

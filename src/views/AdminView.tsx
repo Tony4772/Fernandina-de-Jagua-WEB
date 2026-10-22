@@ -590,12 +590,12 @@ export const AdminView: React.FC<AdminViewProps> = ({
                 </div>
 
                 <h3 className="font-headline-sm text-base text-secondary-fixed border-b border-[#3a251e] pb-2 pt-4">
-                  3. Modalidad Directa (Cómo pedir)
+                  3. Alternativas al checkout web
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                   <div>
                     <label className="block text-xs uppercase text-primary-fixed-dim mb-1 font-label-sm">
-                      Título Opción 1 (App Móvil)
+                      Título Alternativa 1 (App Móvil)
                     </label>
                     <input
                       type="text"
@@ -606,7 +606,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
                   </div>
                   <div>
                     <label className="block text-xs uppercase text-primary-fixed-dim mb-1 font-label-sm">
-                      Título Opción 2 (WhatsApp)
+                      Título Alternativa 2 (WhatsApp)
                     </label>
                     <input
                       type="text"
@@ -617,7 +617,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
                   </div>
                   <div>
                     <label className="block text-xs uppercase text-primary-fixed-dim mb-1 font-label-sm">
-                      Descripción Opción 1
+                      Descripción Alternativa 1
                     </label>
                     <textarea
                       rows={2}
@@ -628,7 +628,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
                   </div>
                   <div>
                     <label className="block text-xs uppercase text-primary-fixed-dim mb-1 font-label-sm">
-                      Descripción Opción 2
+                      Descripción Alternativa 2
                     </label>
                     <textarea
                       rows={2}
