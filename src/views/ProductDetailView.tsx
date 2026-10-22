@@ -214,7 +214,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                   className="w-full flex items-center justify-center gap-space-sm py-space-sm px-space-md rounded-lg bg-surface-container-high text-on-primary-fixed hover:bg-surface-variant transition-all duration-200 font-label-md text-label-md uppercase tracking-widest text-center shadow-sm cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-[18px]">smartphone</span>
-                  <span>Ver en la app (Android)</span>
+                  <span>Ver en Google Play</span>
                 </button>
               </div>
 

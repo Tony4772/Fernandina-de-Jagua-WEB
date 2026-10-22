@@ -9,7 +9,6 @@ import { ProductDetailView } from './views/ProductDetailView';
 import { VisitUsView } from './views/VisitUsView';
 import { AdminView } from './views/AdminView';
 import { ProductModal } from './components/ProductModal';
-import { AndroidModal } from './components/AndroidModal';
 import { ConciergeModal } from './components/ConciergeModal';
 import { PrivacyModal } from './components/PrivacyModal';
 import { AdminLoginModal } from './components/AdminLoginModal';
@@ -25,13 +24,13 @@ import {
   saveCart,
   updateCartQuantity,
 } from './lib/cart';
+import { ANDROID_APP_URL } from './lib/appLinks';
 
 export default function App() {
   const [siteData, setSiteData] = useState<SiteData>(() => loadStoredSiteData());
   const [currentRoute, setCurrentRoute] = useState<PageRoute>('inicio');
   const [selectedProduct, setSelectedProduct] = useState<Product>(() => siteData.products[0]);
   const [modalProduct, setModalProduct] = useState<Product | null>(null);
-  const [androidModalOpen, setAndroidModalOpen] = useState(false);
   const [conciergeModalOpen, setConciergeModalOpen] = useState(false);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const [adminLoginModalOpen, setAdminLoginModalOpen] = useState(false);
@@ -42,6 +41,10 @@ export default function App() {
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
     return sessionStorage.getItem('fernandina_admin_session') === 'active';
   });
+
+  const handleOpenAndroid = () => {
+    window.open(ANDROID_APP_URL, '_blank', 'noopener,noreferrer');
+  };
 
   // Save changes to localStorage whenever siteData updates
   const handleUpdateSiteData = (newData: SiteData) => {
@@ -170,7 +173,7 @@ export default function App() {
             siteData={siteData}
             onRouteChange={handleRouteChange}
             onSelectProduct={handleSelectProduct}
-            onOpenAndroid={() => setAndroidModalOpen(true)}
+            onOpenAndroid={handleOpenAndroid}
           />
         )}
 
@@ -179,7 +182,7 @@ export default function App() {
             siteData={siteData}
             onSelectProduct={handleSelectProduct}
             onOpenProductModal={handleOpenProductModal}
-            onOpenAndroid={() => setAndroidModalOpen(true)}
+            onOpenAndroid={handleOpenAndroid}
             onAddToCart={(product) => handleAddToCart(product)}
             onOpenCart={() => setCartOpen(true)}
           />
@@ -191,7 +194,7 @@ export default function App() {
             siteData={siteData}
             onRouteChange={handleRouteChange}
             onSelectProduct={handleSelectProduct}
-            onOpenAndroid={() => setAndroidModalOpen(true)}
+            onOpenAndroid={handleOpenAndroid}
             onAddToCart={(product, quantity) => handleAddToCart(product, quantity)}
           />
         )}
@@ -199,7 +202,7 @@ export default function App() {
         {currentRoute === 'visitanos' && (
           <VisitUsView
             siteData={siteData}
-            onOpenAndroid={() => setAndroidModalOpen(true)}
+            onOpenAndroid={handleOpenAndroid}
           />
         )}
       </main>
@@ -250,15 +253,10 @@ export default function App() {
         }}
       />
 
-      <AndroidModal
-        isOpen={androidModalOpen}
-        onClose={() => setAndroidModalOpen(false)}
-      />
-
       <ConciergeModal
         isOpen={conciergeModalOpen}
         onClose={() => setConciergeModalOpen(false)}
-        onOpenAndroid={() => setAndroidModalOpen(true)}
+        onOpenAndroid={handleOpenAndroid}
         brand={siteData.brand}
       />
 

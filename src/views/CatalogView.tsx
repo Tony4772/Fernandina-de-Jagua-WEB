@@ -211,7 +211,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                 <span className="material-symbols-outlined text-[18px] text-secondary">
                   android
                 </span>
-                <span>Disponible en App Android</span>
+                <span>Disponible en Google Play</span>
               </button>
             </div>
           </div>

@@ -148,7 +148,7 @@ export const ConciergeModal: React.FC<ConciergeModalProps> = ({
                 }}
                 className="text-secondary font-semibold hover:underline cursor-pointer uppercase font-label-sm tracking-wider"
               >
-                Descargar APK
+                Google Play
               </button>
             </div>
 

@@ -75,7 +75,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               <span className="material-symbols-outlined text-[18px] text-on-tertiary-container">
                 android
               </span>
-              <span>Descargar la app</span>
+              <span>Descargar en Google Play</span>
             </button>
           </div>
 
@@ -199,7 +199,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   <span className="material-symbols-outlined text-[18px] text-secondary-fixed">
                     download
                   </span>
-                  <span>Descargar APK Android</span>
+                  <span>Descargar en Google Play</span>
                 </button>
               </div>
             </div>

@@ -189,7 +189,7 @@ export const VisitUsView: React.FC<VisitUsViewProps> = ({ siteData, onOpenAndroi
                 className="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-space-xs px-space-md py-space-sm rounded-lg bg-on-primary-fixed text-surface-bright hover:bg-secondary hover:text-on-secondary transition-all duration-200 font-label-md text-label-md uppercase tracking-wider shadow-sm cursor-pointer"
               >
                 <span className="material-symbols-outlined text-[16px]">download</span>
-                <span>Descargar app Android</span>
+                <span>Descargar en Google Play</span>
               </button>
             </div>
           </div>
