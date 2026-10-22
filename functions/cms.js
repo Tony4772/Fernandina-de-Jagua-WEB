@@ -22,6 +22,7 @@ function isAuthorized(req, getSecret) {
 
 export function createCmsApp({ getSecret }) {
   router.get('/site', async (_req, res) => {
+    res.set('Cache-Control', 'no-store, max-age=0');
     try {
       const snapshot = await siteRef().get();
       if (!snapshot.exists) {

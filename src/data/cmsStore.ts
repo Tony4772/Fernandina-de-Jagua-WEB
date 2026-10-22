@@ -314,14 +314,17 @@ export function saveStoredSiteData(data: SiteData): void {
 
 export async function loadRemoteSiteData(): Promise<SiteData | null> {
   try {
-    const response = await fetch('/api/cms/site', { headers: { Accept: 'application/json' } });
+    const response = await fetch(`/api/cms/site?catalogVersion=${Date.now()}`, {
+      cache: 'no-store',
+      headers: { Accept: 'application/json', 'Cache-Control': 'no-cache' },
+    });
     if (response.status === 404) return null;
     const result = await response.json();
     if (!response.ok || !result.success || !result.data?.brand || !Array.isArray(result.data.products)) {
       throw new Error(result.error || 'No se pudo cargar el catálogo compartido.');
     }
     const parsed = result.data as SiteData;
-    return {
+    const normalized: SiteData = {
       ...DEFAULT_SITE_DATA,
       ...parsed,
       brand: { ...DEFAULT_SITE_DATA.brand, ...(parsed.brand || {}) },
@@ -330,6 +333,8 @@ export async function loadRemoteSiteData(): Promise<SiteData | null> {
       visit: { ...DEFAULT_SITE_DATA.visit, ...(parsed.visit || {}) },
       products: parsed.products.length > 0 ? parsed.products : DEFAULT_SITE_DATA.products,
     };
+    saveStoredSiteData(normalized);
+    return normalized;
   } catch (error) {
     console.warn('Catálogo compartido no disponible; se mantiene el catálogo local.', error);
     return null;
