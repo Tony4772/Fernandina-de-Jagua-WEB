@@ -14,6 +14,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
 }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   if (!isOpen) return null;
 
@@ -69,17 +70,30 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
             <label className="block text-xs uppercase text-primary-fixed-dim mb-1 font-label-sm">
               Contraseña de Acceso
             </label>
-            <input
-              type="password"
-              autoFocus
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                if (error) setError('');
-              }}
-              placeholder="Ingrese su contraseña..."
-              className="w-full p-2.5 rounded bg-[#160d0a] border border-[#3e2821] text-surface focus:border-secondary focus:outline-none text-sm"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                autoFocus
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (error) setError('');
+                }}
+                placeholder="Ingrese su contraseña..."
+                className="w-full p-2.5 pr-11 rounded bg-[#160d0a] border border-[#3e2821] text-surface focus:border-secondary focus:outline-none text-sm"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((visible) => !visible)}
+                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                title={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                className="absolute inset-y-0 right-0 w-10 flex items-center justify-center text-primary-fixed-dim hover:text-surface transition-colors cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-[19px]">
+                  {showPassword ? 'visibility_off' : 'visibility'}
+                </span>
+              </button>
+            </div>
             {error && <p className="text-xs text-red-400 mt-1.5">{error}</p>}
           </div>
 
